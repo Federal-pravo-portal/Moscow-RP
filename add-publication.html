@@ -9,119 +9,24 @@
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
-    .pub-form {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: 32px 28px;
-      background: #fafafa;
-      border: 1px solid #e8e8e8;
-      border-radius: 12px;
-    }
+    .pub-form { max-width: 620px; margin: 0 auto; padding: 32px 28px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px; }
     .pub-form__field { margin-bottom: 20px; }
-    .pub-form__label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
-    }
-    .pub-form__input,
-    .pub-form__select {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 15px;
-      font-family: inherit;
-      border: 1.5px solid #d8d8d8;
-      border-radius: 8px;
-      outline: none;
-      box-sizing: border-box;
-      background: #fff;
-      color: #111;
-      transition: border-color .2s ease;
-    }
-    .pub-form__input:focus,
-    .pub-form__select:focus { border-color: #c9a24a; }
-    .pub-form__file {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background: #fff;
-      border: 1.5px dashed #c9a24a;
-      border-radius: 8px;
-      font-size: 14px;
-      color: #666;
-      cursor: pointer;
-      box-sizing: border-box;
-    }
-    .pub-form__file::-webkit-file-upload-button {
-      background: #c9a24a;
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      margin-right: 12px;
-    }
-    .pub-form__preview {
-      margin-top: 14px;
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 8px;
-      display: none;
-    }
+    .pub-form__label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
+    .pub-form__input, .pub-form__select { width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; border: 1.5px solid #d8d8d8; border-radius: 8px; outline: none; box-sizing: border-box; background: #fff; color: #111; transition: border-color .2s ease; }
+    .pub-form__input:focus, .pub-form__select:focus { border-color: #c9a24a; }
+    .pub-form__file { display: block; width: 100%; padding: 14px; background: #fff; border: 1.5px dashed #c9a24a; border-radius: 8px; font-size: 14px; color: #666; cursor: pointer; box-sizing: border-box; }
+    .pub-form__file::-webkit-file-upload-button { background: #c9a24a; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-family: inherit; margin-right: 12px; }
+    .pub-form__preview { margin-top: 14px; max-width: 100%; max-height: 300px; border-radius: 8px; display: none; }
     .pub-form__preview.is-visible { display: block; }
-    .pub-form__btn {
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-      background: #c9302c;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background .2s ease;
-      margin-top: 8px;
-    }
+    .pub-form__btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; background: #c9302c; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; transition: background .2s ease; margin-top: 8px; }
     .pub-form__btn:hover { background: #a82822; }
     .pub-form__btn:disabled { opacity: .6; cursor: not-allowed; }
-    .pub-form__message {
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      display: none;
-    }
-    .pub-form__message.is-error {
-      display: block;
-      background: #fdecec;
-      color: #b3261e;
-      border: 1px solid #f3c0bd;
-    }
-    .pub-form__message.is-success {
-      display: block;
-      background: #eaf6ec;
-      color: #1a6b31;
-      border: 1px solid #b8dcbf;
-    }
-    .pub-form__progress {
-      margin-top: 12px;
-      height: 6px;
-      background: #eee;
-      border-radius: 4px;
-      overflow: hidden;
-      display: none;
-    }
+    .pub-form__message { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; display: none; }
+    .pub-form__message.is-error { display: block; background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd; }
+    .pub-form__message.is-success { display: block; background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf; }
+    .pub-form__progress { margin-top: 12px; height: 6px; background: #eee; border-radius: 4px; overflow: hidden; display: none; }
     .pub-form__progress.is-visible { display: block; }
-    .pub-form__progress-bar {
-      height: 100%;
-      background: #c9a24a;
-      width: 0;
-      transition: width .3s ease;
-    }
+    .pub-form__progress-bar { height: 100%; background: #c9a24a; width: 0; transition: width .3s ease; }
   </style>
 </head>
 <body>
@@ -138,7 +43,7 @@
   <main class="page">
     <header class="page__head">
       <h1 class="page__title">Новая публикация</h1>
-      <p class="page__subtitle">Введите название и загрузите изображение документа</p>
+      <p class="page__subtitle">Введите название, выберите раздел и загрузите изображение</p>
     </header>
 
     <form class="pub-form" id="pubForm">
@@ -168,10 +73,7 @@
 
       <button class="pub-form__btn" type="submit" id="submitBtn">Опубликовать</button>
 
-      <div class="pub-form__progress" id="progress">
-        <div class="pub-form__progress-bar" id="progressBar"></div>
-      </div>
-
+      <div class="pub-form__progress" id="progress"><div class="pub-form__progress-bar" id="progressBar"></div></div>
       <div class="pub-form__message" id="message"></div>
     </form>
   </main>
@@ -181,10 +83,17 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // --- НАСТРОЙКИ CLOUDINARY ---
     const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
     const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
-    // ----------------------------
+
+    const SECTION_TO_PAGE = {
+      'ukazy': 'ukazy.html',
+      'ap': 'ap.html',
+      'postanovleniya': 'postanovleniya.html',
+      'zak-sobranie': 'zak-sobranie.html',
+      'cik': 'cik.html',
+      'sb': 'sb.html'
+    };
 
     const form = document.getElementById('pubForm');
     const titleInput = document.getElementById('title');
@@ -196,20 +105,23 @@
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progressBar');
 
+    // Автоподстановка раздела из URL
+    const params = new URLSearchParams(window.location.search);
+    const presetSection = params.get('section');
+    if (presetSection && SECTION_TO_PAGE[presetSection]) {
+      sectionSelect.value = presetSection;
+    }
+
     let currentUser = null;
     let currentRole = 'citizen';
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = 'login.html';
-        return;
-      }
+      if (!user) { window.location.href = 'login.html'; return; }
       currentUser = user;
       try {
         const token = await user.getIdTokenResult();
         currentRole = token.claims.role || 'citizen';
       } catch (e) {}
-
       if (currentRole !== 'government' && currentRole !== 'editor') {
         showMessage('У вас нет прав на публикацию. Обратитесь к администрации.', 'error');
         submitBtn.disabled = true;
@@ -224,32 +136,20 @@
     imageInput.addEventListener('change', () => {
       const file = imageInput.files[0];
       if (!file) return;
-      const url = URL.createObjectURL(file);
-      preview.src = url;
+      preview.src = URL.createObjectURL(file);
       preview.classList.add('is-visible');
     });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      if (!currentUser) {
-        showMessage('Вы не авторизованы.', 'error');
-        return;
-      }
+      if (!currentUser) { showMessage('Вы не авторизованы.', 'error'); return; }
 
       const title = titleInput.value.trim();
       const section = sectionSelect.value;
       const file = imageInput.files[0];
 
-      if (!title || !section || !file) {
-        showMessage('Заполните все поля.', 'error');
-        return;
-      }
-
-      if (file.size > 10 * 1024 * 1024) {
-        showMessage('Файл больше 10 МБ. Сожмите или загрузите меньше.', 'error');
-        return;
-      }
+      if (!title || !section || !file) { showMessage('Заполните все поля.', 'error'); return; }
+      if (file.size > 10 * 1024 * 1024) { showMessage('Файл больше 10 МБ.', 'error'); return; }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Загрузка...';
@@ -257,27 +157,19 @@
       progressBar.style.width = '0%';
 
       try {
-        // Загрузка в Cloudinary
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-        const response = await fetch(
-          'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload',
-          { method: 'POST', body: formData }
-        );
-
+        const response = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload', { method: 'POST', body: formData });
         if (!response.ok) {
           const err = await response.json();
           throw new Error((err.error && err.error.message) || 'Ошибка загрузки в Cloudinary');
         }
-
         const data = await response.json();
         const imageUrl = data.secure_url;
-
         progressBar.style.width = '100%';
 
-        // Сохранение в Firestore
         await addDoc(collection(db, 'publications'), {
           title: title,
           imageUrl: imageUrl,
@@ -289,8 +181,9 @@
           createdAt: serverTimestamp()
         });
 
-        showMessage('Готово! Публикация добавлена. Перенаправление...', 'success');
-        setTimeout(() => { window.location.href = 'akty.html'; }, 1500);
+        showMessage('Готово! Перенаправление в раздел...', 'success');
+        const redirect = SECTION_TO_PAGE[section] || 'akty.html';
+        setTimeout(() => { window.location.href = redirect; }, 1200);
 
       } catch (err) {
         console.error(err);
