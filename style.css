@@ -1300,7 +1300,6 @@ body {
   font-weight: 600;
   font-family: inherit;
   color: #ffffff;
-  background: #c9a24a;
   border-radius: 8px;
   border: 1.5px solid transparent;
   text-decoration: none;
@@ -1310,29 +1309,23 @@ body {
   transition: opacity 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
-.site-header__auth:hover {
-  transform: translateY(-1px);
-}
+.site-header__auth:hover { transform: translateY(-1px); }
 
-/* Кнопка «Войти» — серая */
 .site-header__auth--outline {
   background: #4a4a4a;
   border-color: #4a4a4a;
   color: #ffffff;
 }
-
 .site-header__auth--outline:hover {
   background: #5e5e5e;
   border-color: #5e5e5e;
 }
 
-/* Кнопка «Регистрация» — красная */
 .site-header__auth--register {
   background: #c9302c;
   border-color: #c9302c;
   color: #ffffff;
 }
-
 .site-header__auth--register:hover {
   background: #a82822;
   border-color: #a82822;
