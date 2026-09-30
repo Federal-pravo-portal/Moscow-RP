@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поиск по сайту — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .search-box {
+      margin: 24px 0 32px;
+      position: relative;
+    }
+    .search-box__input {
+      width: 100%;
+      padding: 16px 52px 16px 20px;
+      font-size: 16px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+    .search-box__input:focus {
+      border-color: #c9a24a;
+    }
+    .search-box__icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      pointer-events: none;
+    }
+    .search-results {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .search-item {
+      padding: 18px 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .search-item:first-child { padding-top: 0; }
+    .search-item:last-child { border-bottom: none; }
+    .search-item__link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+    .search-item__link:hover { opacity: 0.7; }
+    .search-item__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      margin: 0 0 6px;
+      line-height: 1.3;
+    }
+    .search-item__desc {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .search-item__title mark {
+      background: #fbe9a8;
+      color: #111;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    .search-empty {
+      padding: 40px 0;
+      color: #888;
+      text-align: center;
+      font-size: 15px;
+    }
+    @media (max-width: 640px) {
+      .search-box__input { padding: 14px 46px 14px 16px; font-size: 15px; }
+      .search-item__title { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+    <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/>
+      </svg>
+    </a>
+  </header>
+
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title">Поиск по сайту</h1>
+      <p class="page__subtitle">Введите название документа, номер или ключевое слово</p>
+    </header>
+
+    <div class="search-box">
+      <input type="text" class="search-box__input" id="searchInput" placeholder="Например: указ 1, конституция, постановление правительства..." autocomplete="off">
+      <span class="search-box__icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
+    </div>
+
+    <ul class="search-results" id="searchResults"></ul>
+    <div class="search-empty" id="searchEmpty">Начните вводить запрос</div>
+  </main>
+
+  <script src="search-index.js"></script>
+  <script>
+  (function () {
+    var input = document.getElementById('searchInput');
+    var results = document.getElementById('searchResults');
+    var empty = document.getElementById('searchEmpty');
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+      });
+    }
+
+    function highlight(text, query) {
+      var safe = escapeHtml(text);
+      if (!query) return safe;
+      var q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return safe.replace(new RegExp('(' + q + ')', 'gi'), '<mark>$1</mark>');
+    }
+
+    function search(query) {
+      var q = query.trim().toLowerCase();
+      if (!q) {
+        results.innerHTML = '';
+        empty.textContent = 'Начните вводить запрос';
+        empty.style.display = 'block';
+        return;
+      }
+
+      var found = SITE_PAGES.filter(function (page) {
+        var haystack = (page.title + ' ' + page.desc + ' ' + (page.keywords || '')).toLowerCase();
+        return haystack.indexOf(q) !== -1;
+      });
+
+      if (found.length === 0) {
+        results.innerHTML = '';
+        empty.textContent = 'Ничего не найдено по запросу «' + query + '»';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      results.innerHTML = found.map(function (page) {
+        return '<li class="search-item">' +
+          '<a class="search-item__link" href="' + page.url + '">' +
+            '<h2 class="search-item__title">' + highlight(page.title, query) + '</h2>' +
+            '<p class="search-item__desc">' + highlight(page.desc, query) + '</p>' +
+          '</a>' +
+        '</li>';
+      }).join('');
+    }
+
+    input.addEventListener('input', function () { search(input.value); });
+
+    // Если в URL пришёл ?q=... — подставляем
+    var params = new URLSearchParams(window.location.search);
+    var initial = params.get('q');
+    if (initial) {
+      input.value = initial;
+      search(initial);
+    }
+  })();
+  </script>
+
+</body>
+</html>
