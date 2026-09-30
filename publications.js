@@ -1,11 +1,13 @@
 // js/publications.js
-// Подгружает публикации из Firestore + удаление для роли government
+// Загружает публикации из Firestore в <ul> текущего раздела
 
-import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { db } from "./firebase-config.js";
 import { collection, query, where, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const SECTION_MAP = {
+// Какой раздел у текущего файла
+const PAGE_SECTION = {
   'ukazy':          'ukazy',
   'ap':             'ap',
   'postanovleniya': 'postanovleniya',
@@ -15,17 +17,22 @@ const SECTION_MAP = {
 };
 
 const fileName = window.location.pathname.split('/').pop().replace(/\.html$/, '');
-const section = SECTION_MAP[fileName];
+const section = PAGE_SECTION[fileName];
 
-let currentRole = 'citizen';
+console.log('[publications.js] файл:', fileName, '| раздел:', section);
 
 if (section) {
   injectStyles();
-  initAuthAndLoad(section);
-}
 
-// Ждём, пока Firebase Auth отдаст роль, потом грузим
-function initAuthAndLoad(section) {
+  // Грузим сразу, не ждём auth
+  const ul = document.querySelector('.ukazy-list, .post-list, .zs-list, .cik-list, .sb-list');
+  console.log('[publications.js] ul найден:', !!ul);
+  if (ul) {
+    loadPublications(section, ul);
+  }
+
+  // Отдельно отслеживаем роль для кнопок удаления
+  let currentRole = 'citizen';
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       try {
@@ -35,11 +42,11 @@ function initAuthAndLoad(section) {
     } else {
       currentRole = 'citizen';
     }
-
-    const ul = document.querySelector('.ukazy-list, .post-list, .zs-list, .cik-list, .sb-list');
-    if (!ul) return;
-    loadPublications(section, ul);
+    // Обновим кнопки удаления у уже отрисованных элементов
+    updateDeleteButtons(currentRole);
   });
+
+  window.__currentRole = () => currentRole;
 }
 
 function injectStyles() {
@@ -47,11 +54,7 @@ function injectStyles() {
   const style = document.createElement('style');
   style.id = 'dyn-pub-styles';
   style.textContent = `
-    .dyn-pub {
-      padding: 24px 0;
-      border-bottom: 1px solid #e8e8e8;
-      position: relative;
-    }
+    .dyn-pub { padding: 24px 0; border-bottom: 1px solid #e8e8e8; position: relative; }
     .dyn-pub:first-child { padding-top: 0; }
     .dyn-pub:last-child { border-bottom: none; padding-bottom: 0; }
     .dyn-pub__title {
@@ -72,37 +75,18 @@ function injectStyles() {
     }
     .dyn-pub__img-link:hover { opacity: 0.9; }
     .dyn-pub__img { display: block; width: 100%; height: auto; }
-
-    /* Кнопка удаления */
     .dyn-pub__delete {
-      position: absolute;
-      top: 24px;
-      right: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #fff;
-      border: 1px solid #e0b5b3;
-      color: #c9302c;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; top: 24px; right: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #fff; border: 1px solid #e0b5b3;
+      color: #c9302c; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
       transition: background 0.2s ease, transform 0.15s ease;
-      padding: 0;
-      font-family: inherit;
-      z-index: 2;
+      padding: 0; font-family: inherit; z-index: 2;
     }
-    .dyn-pub__delete:hover {
-      background: #c9302c;
-      color: #fff;
-      transform: scale(1.06);
-    }
-    .dyn-pub.is-deleting {
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
+    .dyn-pub__delete.is-visible { display: inline-flex; }
+    .dyn-pub__delete:hover { background: #c9302c; color: #fff; transform: scale(1.06); }
+    .dyn-pub.is-deleting { opacity: 0.4; pointer-events: none; }
     @media (max-width: 640px) {
       .dyn-pub { padding: 18px 0; }
       .dyn-pub__title { font-size: 17px; padding-right: 38px; }
@@ -115,8 +99,11 @@ function injectStyles() {
 
 async function loadPublications(section, ul) {
   try {
+    console.log('[publications.js] загружаю section =', section);
     const q = query(collection(db, 'publications'), where('section', '==', section));
     const snap = await getDocs(q);
+    console.log('[publications.js] найдено записей:', snap.size);
+
     if (snap.empty) return;
 
     const items = [];
@@ -131,7 +118,6 @@ async function loadPublications(section, ul) {
     const html = items.map(renderItem).join('');
     ul.insertAdjacentHTML('beforeend', html);
 
-    // Обработчики удаления
     ul.querySelectorAll('.dyn-pub__delete').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -140,9 +126,18 @@ async function loadPublications(section, ul) {
         if (docId) handleDelete(docId, title);
       });
     });
+
+    updateDeleteButtons(window.__currentRole ? window.__currentRole() : 'citizen');
   } catch (err) {
-    console.warn('Публикации не загружены:', err);
+    console.error('[publications.js] ОШИБКА:', err);
   }
+}
+
+function updateDeleteButtons(role) {
+  const show = role === 'government';
+  document.querySelectorAll('.dyn-pub__delete').forEach((btn) => {
+    btn.classList.toggle('is-visible', show);
+  });
 }
 
 function renderItem(item) {
@@ -152,19 +147,14 @@ function renderItem(item) {
   const title = esc(d.title || 'Без названия');
   const url = esc(d.imageUrl || '');
 
-  // Кнопку удаления показываем только Правительству
-  const deleteBtn = currentRole === 'government'
-    ? `<button class="dyn-pub__delete" type="button" data-id="${item.id}" data-title="${title}" title="Удалить публикацию" aria-label="Удалить">
+  return `
+    <li class="dyn-pub" data-doc-id="${item.id}">
+      <button class="dyn-pub__delete" type="button" data-id="${item.id}" data-title="${title}" title="Удалить" aria-label="Удалить">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
-      </button>`
-    : '';
-
-  return `
-    <li class="dyn-pub" data-doc-id="${item.id}">
-      ${deleteBtn}
+      </button>
       <h2 class="dyn-pub__title">${title}</h2>
       <p class="dyn-pub__meta">
         <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" aria-hidden="true">
