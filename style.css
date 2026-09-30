@@ -1013,3 +1013,260 @@ img {
   margin: 0;
   padding: 0;
 }
+/* ============================================================
+   МОБИЛЬНАЯ ОПТИМИЗАЦИЯ — универсальный блок
+   Вставить в конец style.css
+   ============================================================ */
+
+/* Общие правила: картинки и переносы */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+body {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* ---------- Планшеты и меньше (1100px) ---------- */
+@media (max-width: 1100px) {
+
+  /* Двухколоночные документы (конституция, кодексы, ФЗ) */
+  .doc-layout {
+    display: block;
+  }
+
+  .doc-nav {
+    position: static !important;
+    width: 100% !important;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-right: none !important;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .doc-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .doc-nav__link {
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #f4f4f4;
+    white-space: nowrap;
+  }
+
+  .doc-content {
+    padding: 0 !important;
+  }
+}
+
+/* ---------- Мобильные (768px) ---------- */
+@media (max-width: 768px) {
+
+  /* Шапка сайта */
+  .site-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .site-header__menu {
+    order: 3;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .site-header__title {
+    font-size: 18px;
+  }
+
+  .site-header__discord {
+    margin-left: auto;
+  }
+
+  /* Сетки карточек законов и актов */
+  .laws__grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* Список указов, постановлений и т.д. */
+  .ukazy-item,
+  .post-item,
+  .zs-item,
+  .cik-item,
+  .sb-item {
+    padding: 18px 0;
+  }
+
+  .ukazy-item__title,
+  .post-item__title,
+  .zs-item__title,
+  .cik-item__title,
+  .sb-item__title {
+    font-size: 17px;
+    line-height: 1.3;
+  }
+
+  .ukazy-item__date,
+  .post-item__date,
+  .zs-item__date,
+  .cik-item__date,
+  .sb-item__date {
+    font-size: 14px;
+  }
+
+  .ukazy-item__desc,
+  .post-item__desc,
+  .zs-item__desc,
+  .cik-item__desc,
+  .sb-item__desc {
+    font-size: 15px;
+  }
+}
+
+/* ---------- Маленькие телефоны (640px) ---------- */
+@media (max-width: 640px) {
+
+  /* Заголовки страниц и документов */
+  .page__title,
+  .doc-content__title,
+  .hero__title {
+    font-size: 22px !important;
+    line-height: 1.25;
+  }
+
+  .page__subtitle,
+  .hero__subtitle {
+    font-size: 14px;
+  }
+
+  .doc-chapter {
+    font-size: 18px;
+    margin-top: 28px;
+    margin-bottom: 14px;
+  }
+
+  .doc-article {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .doc-preamble {
+    font-size: 14px;
+    padding: 16px;
+  }
+
+  /* Основные отступы контента */
+  .page {
+    padding: 20px 16px !important;
+  }
+
+  .doc-content__emblem img {
+    max-width: 120px;
+  }
+
+  /* Кнопка «наверх» */
+  .to-top {
+    right: 16px !important;
+    bottom: 16px !important;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Таблицы (если появятся) */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Галереи (главная, дорожные знаки) */
+  .about__gallery {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px;
+  }
+
+  .doc-signs__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+
+  .doc-signs__item {
+    padding: 12px;
+  }
+
+  .doc-signs__item img {
+    max-width: 100px;
+  }
+
+  /* Карточки законов */
+  .laws__card {
+    padding: 16px;
+  }
+
+  .laws__card-title {
+    font-size: 16px;
+  }
+
+  .laws__card-desc {
+    font-size: 13px;
+  }
+}
+
+/* ---------- Очень маленькие (480px) ---------- */
+@media (max-width: 480px) {
+
+  .site-header__menu {
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .site-header__link {
+    padding: 6px 8px;
+  }
+
+  .doc-nav__link {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .about__gallery {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page__title,
+  .doc-content__title,
+  .hero__title {
+    font-size: 20px !important;
+  }
+}
+
+/* ---------- Кликабельные зоны на тач-устройствах ---------- */
+@media (hover: none) and (pointer: coarse) {
+
+  .site-header__link,
+  .doc-nav__link,
+  .laws__card,
+  .post-item__link,
+  .zs-item__link,
+  .ukazy-item__link,
+  .cik-item__link,
+  .sb-item__link {
+    min-height: 44px;
+  }
+
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
