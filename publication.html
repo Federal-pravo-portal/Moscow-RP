@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Публикация — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .pub-view { max-width: 900px; margin: 0 auto; }
+    .pub-view__meta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; color: #666; margin: 0 0 24px;
+    }
+    .pub-view__meta svg { color: #c9a24a; flex-shrink: 0; }
+    .pub-view__img {
+      display: block; max-width: 100%; height: auto;
+      margin: 0 auto; border: 1px solid #e8e8e8;
+      border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .pub-view__back {
+      display: inline-block; margin-top: 32px; font-size: 15px;
+      color: #c9a24a; text-decoration: none; font-weight: 600;
+    }
+    .pub-view__back:hover { text-decoration: underline; }
+    .pub-view__loading { text-align: center; padding: 60px 0; color: #888; }
+    .pub-view__error { text-align: center; padding: 60px 0; color: #b3261e; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="akty.html" class="site-header__link is-current">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+  </header>
+
+  <main class="page">
+    <div id="pubContent" class="pub-view">
+      <div class="pub-view__loading">Загрузка публикации...</div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { db } from "./js/firebase-config.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const contentEl = document.getElementById('pubContent');
+    const params = new URLSearchParams(window.location.search);
+    const pubId = params.get('id');
+
+    const PAGE_TO_SECTION = {
+      'ukazy': 'ukazy.html',
+      'ap': 'ap.html',
+      'postanovleniya': 'postanovleniya.html',
+      'zak-sobranie': 'zak-sobranie.html',
+      'cik': 'cik.html',
+      'sb': 'sb.html'
+    };
+
+    if (!pubId) {
+      contentEl.innerHTML = '<div class="pub-view__error">Не указан ID публикации.</div>';
+    } else {
+      load();
+    }
+
+    async function load() {
+      try {
+        const snap = await getDoc(doc(db, 'publications', pubId));
+        if (!snap.exists()) {
+          contentEl.innerHTML = '<div class="pub-view__error">Публикация не найдена.</div>';
+          return;
+        }
+        const d = snap.data();
+        render(d);
+      } catch (err) {
+        console.error(err);
+        contentEl.innerHTML = '<div class="pub-view__error">Ошибка загрузки: ' + err.message + '</div>';
+      }
+    }
+
+    function render(d) {
+      const title = esc(d.title || 'Публикация');
+      const subtitle = esc(d.subtitle || '');
+      const date = formatDate(d.createdAt);
+      const author = d.author ? ' · ' + esc(d.author) : '';
+      const url = esc(d.imageUrl || '');
+      const back = PAGE_TO_SECTION[d.section] || 'akty.html';
+
+      document.title = title + ' — Moscow RP';
+
+      contentEl.innerHTML = `
+        <header class="page__head">
+          <h1 class="page__title">${title}</h1>
+          ${subtitle ? `<p class="page__subtitle">${subtitle}</p>` : ''}
+        </header>
+        <p class="pub-view__meta">
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
+          <span>${date}${author}</span>
+        </p>
+        <img class="pub-view__img" src="${url}" alt="${title}">
+        <a href="${back}" class="pub-view__back">← Вернуться к списку</a>
+      `;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' года';
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+  </script>
+</body>
+</html>

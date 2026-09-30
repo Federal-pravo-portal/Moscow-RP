@@ -14,11 +14,12 @@
     .pub-form__label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
     .pub-form__input, .pub-form__select { width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; border: 1.5px solid #d8d8d8; border-radius: 8px; outline: none; box-sizing: border-box; background: #fff; color: #111; transition: border-color .2s ease; }
     .pub-form__input:focus, .pub-form__select:focus { border-color: #c9a24a; }
+    .pub-form__hint { font-size: 12px; color: #999; margin-top: 6px; }
     .pub-form__file { display: block; width: 100%; padding: 14px; background: #fff; border: 1.5px dashed #c9a24a; border-radius: 8px; font-size: 14px; color: #666; cursor: pointer; box-sizing: border-box; }
     .pub-form__file::-webkit-file-upload-button { background: #c9a24a; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-family: inherit; margin-right: 12px; }
     .pub-form__preview { margin-top: 14px; max-width: 100%; max-height: 300px; border-radius: 8px; display: none; }
     .pub-form__preview.is-visible { display: block; }
-    .pub-form__btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; background: #c9302c; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; transition: background .2s ease; margin-top: 8px; }
+    .pub-form__btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; background: #c9302c; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; margin-top: 8px; }
     .pub-form__btn:hover { background: #a82822; }
     .pub-form__btn:disabled { opacity: .6; cursor: not-allowed; }
     .pub-form__message { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; display: none; }
@@ -43,13 +44,20 @@
   <main class="page">
     <header class="page__head">
       <h1 class="page__title">Новая публикация</h1>
-      <p class="page__subtitle">Введите название, выберите раздел и загрузите изображение</p>
+      <p class="page__subtitle">Заголовок, краткое описание и изображение документа</p>
     </header>
 
     <form class="pub-form" id="pubForm">
       <div class="pub-form__field">
-        <label class="pub-form__label" for="title">Название публикации</label>
-        <input class="pub-form__input" type="text" id="title" placeholder="Например: Постановление Правительства РФ №5" required>
+        <label class="pub-form__label" for="title">Основное название</label>
+        <input class="pub-form__input" type="text" id="title" placeholder="Например: Указ Президента Российской Федерации №4" required>
+        <div class="pub-form__hint">Это будет крупным заголовком в списке.</div>
+      </div>
+
+      <div class="pub-form__field">
+        <label class="pub-form__label" for="subtitle">О чём (второстепенное)</label>
+        <input class="pub-form__input" type="text" id="subtitle" placeholder="Например: О назначении на должность" required>
+        <div class="pub-form__hint">Это будет описанием под заголовком.</div>
       </div>
 
       <div class="pub-form__field">
@@ -97,6 +105,7 @@
 
     const form = document.getElementById('pubForm');
     const titleInput = document.getElementById('title');
+    const subtitleInput = document.getElementById('subtitle');
     const sectionSelect = document.getElementById('section');
     const imageInput = document.getElementById('image');
     const preview = document.getElementById('preview');
@@ -105,7 +114,6 @@
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progressBar');
 
-    // Автоподстановка раздела из URL
     const params = new URLSearchParams(window.location.search);
     const presetSection = params.get('section');
     if (presetSection && SECTION_TO_PAGE[presetSection]) {
@@ -123,7 +131,7 @@
         currentRole = token.claims.role || 'citizen';
       } catch (e) {}
       if (currentRole !== 'government' && currentRole !== 'editor') {
-        showMessage('У вас нет прав на публикацию. Обратитесь к администрации.', 'error');
+        showMessage('У вас нет прав на публикацию.', 'error');
         submitBtn.disabled = true;
       }
     });
@@ -145,10 +153,11 @@
       if (!currentUser) { showMessage('Вы не авторизованы.', 'error'); return; }
 
       const title = titleInput.value.trim();
+      const subtitle = subtitleInput.value.trim();
       const section = sectionSelect.value;
       const file = imageInput.files[0];
 
-      if (!title || !section || !file) { showMessage('Заполните все поля.', 'error'); return; }
+      if (!title || !subtitle || !section || !file) { showMessage('Заполните все поля.', 'error'); return; }
       if (file.size > 10 * 1024 * 1024) { showMessage('Файл больше 10 МБ.', 'error'); return; }
 
       submitBtn.disabled = true;
@@ -170,8 +179,9 @@
         const imageUrl = data.secure_url;
         progressBar.style.width = '100%';
 
-        await addDoc(collection(db, 'publications'), {
+        const docRef = await addDoc(collection(db, 'publications'), {
           title: title,
+          subtitle: subtitle,
           imageUrl: imageUrl,
           section: section,
           author: currentUser.displayName || currentUser.email.split('@')[0],
@@ -181,7 +191,7 @@
           createdAt: serverTimestamp()
         });
 
-        showMessage('Готово! Перенаправление в раздел...', 'success');
+        showMessage('Готово! Перенаправление...', 'success');
         const redirect = SECTION_TO_PAGE[section] || 'akty.html';
         setTimeout(() => { window.location.href = redirect; }, 1200);
 
