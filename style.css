@@ -1302,28 +1302,40 @@ body {
   color: #ffffff;
   background: #c9a24a;
   border-radius: 8px;
-  border: none;
+  border: 1.5px solid transparent;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   line-height: 1;
-  transition: opacity 0.2s ease, transform 0.15s ease;
+  transition: opacity 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
 .site-header__auth:hover {
-  opacity: 0.88;
   transform: translateY(-1px);
 }
 
+/* Кнопка «Войти» — серая */
 .site-header__auth--outline {
-  background: transparent;
-  border: 1.5px solid #c9a24a;
-  color: #c9a24a;
+  background: #4a4a4a;
+  border-color: #4a4a4a;
+  color: #ffffff;
 }
 
 .site-header__auth--outline:hover {
-  background: #c9a24a;
+  background: #5e5e5e;
+  border-color: #5e5e5e;
+}
+
+/* Кнопка «Регистрация» — красная */
+.site-header__auth--register {
+  background: #c9302c;
+  border-color: #c9302c;
   color: #ffffff;
+}
+
+.site-header__auth--register:hover {
+  background: #a82822;
+  border-color: #a82822;
 }
 
 .site-header__auth svg { flex-shrink: 0; }
@@ -1350,7 +1362,6 @@ body {
   .site-header__right { right: 20px; gap: 8px; }
   .site-header__auth { padding: 7px 10px; font-size: 12px; }
   .site-header__auth-name { max-width: 80px; }
-  .site-header__auth--register { display: none; }
 }
 
 @media (max-width: 640px) {
