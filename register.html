@@ -158,11 +158,10 @@
 
         // Сохраняем профиль в Firestore
         await setDoc(doc(db, 'users', cred.user.uid), {
-          email: email,
-          displayName: email.split('@')[0],
-          role: 'user',
-          createdAt: serverTimestamp()
-        });
+  email: email,
+  displayName: email.split('@')[0],
+  createdAt: serverTimestamp()
+});
 
         showMessage('Готово! Аккаунт создан. Перенаправление...', 'success');
         setTimeout(() => { window.location.href = 'profile.html'; }, 1200);

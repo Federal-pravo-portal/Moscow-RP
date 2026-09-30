@@ -110,60 +110,52 @@
   </main>
 
   <script type="module">
-    import { auth, db } from "./js/firebase-config.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { auth } from "./js/firebase-config.js";
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const loading = document.getElementById('loading');
-    const notLogged = document.getElementById('notLogged');
-    const profileBlock = document.getElementById('profileBlock');
+  const loading = document.getElementById('loading');
+  const notLogged = document.getElementById('notLogged');
+  const profileBlock = document.getElementById('profileBlock');
 
-    onAuthStateChanged(auth, async (user) => {
-      loading.style.display = 'none';
+  onAuthStateChanged(auth, async (user) => {
+    loading.style.display = 'none';
 
-      if (!user) {
-        notLogged.style.display = 'block';
-        profileBlock.style.display = 'none';
-        return;
-      }
+    if (!user) {
+      notLogged.style.display = 'block';
+      profileBlock.style.display = 'none';
+      return;
+    }
 
-      profileBlock.style.display = 'block';
+    profileBlock.style.display = 'block';
 
-      document.getElementById('userEmail').textContent = user.email || '—';
-      document.getElementById('userUid').textContent = user.uid;
+    document.getElementById('userEmail').textContent = user.email || '—';
+    document.getElementById('userUid').textContent = user.uid;
+    document.getElementById('userName').textContent = user.displayName || '—';
 
-      // Получаем данные из Firestore
-      let role = 'user';
-      let displayName = user.displayName || '—';
+    // Читаем роль из Custom Claims
+    let role = 'user';
+    try {
+      const tokenResult = await user.getIdTokenResult(true); // true = принудительно обновить токен
+      role = tokenResult.claims.role || 'user';
+    } catch (err) {
+      console.warn('Не удалось прочитать роль:', err);
+    }
 
-      try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.role) role = data.role;
-          if (data.displayName) displayName = data.displayName;
-        }
-      } catch (err) {
-        console.warn('Не удалось прочитать профиль:', err);
-      }
+    const roleEl = document.getElementById('userRole');
+    roleEl.textContent = role;
+    roleEl.className = 'role-badge role-badge--' + (
+      role === 'admin' ? 'admin' : role === 'editor' ? 'editor' : 'user'
+    );
 
-      document.getElementById('userName').textContent = displayName;
+    if (role === 'admin' || role === 'editor') {
+      document.getElementById('adminPanel').style.display = 'block';
+    }
+  });
 
-      const roleEl = document.getElementById('userRole');
-      roleEl.textContent = role;
-      roleEl.className = 'role-badge role-badge--' + (
-        role === 'admin' ? 'admin' : role === 'editor' ? 'editor' : 'user'
-      );
-
-      if (role === 'admin' || role === 'editor') {
-        document.getElementById('adminPanel').style.display = 'block';
-      }
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = 'index.html';
-    });
-  </script>
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'index.html';
+  });
+</script>
 </body>
 </html>
