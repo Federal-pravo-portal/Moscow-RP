@@ -28,19 +28,6 @@
     .dyn-pub__delete { position: absolute; top: 24px; right: 0; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid #e0b5b3; color: #c9302c; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; z-index: 2; }
     .dyn-pub__delete.is-visible { display: inline-flex; }
     .dyn-pub__delete:hover { background: #c9302c; color: #fff; }
-
-    #pubDebug {
-      margin: 20px 0;
-      padding: 12px 16px;
-      background: #fff8e1;
-      border: 1px solid #ffe082;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 12px;
-      color: #666;
-      display: none;
-    }
-    #pubDebug.is-visible { display: block; }
   </style>
 </head>
 <body>
@@ -72,8 +59,6 @@
       </a>
     </div>
 
-    <div id="pubDebug">Инициализация...</div>
-
     <ul class="sb-list" id="sbList"></ul>
   </main>
 
@@ -82,34 +67,19 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, query, where, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const debug = document.getElementById('pubDebug');
-    const listEl = document.getElementById('sbList');
     const SECTION = 'sb';
+    const listEl = document.getElementById('sbList');
 
-    // Показываем отладку — потом можешь убрать (display: none)
-    debug.classList.add('is-visible');
-    debug.textContent = '1. Скрипт запущен. Ищу ul...';
+    let currentRole = 'citizen';
 
-    if (!listEl) {
-      debug.textContent = '❌ ОШИБКА: не найден ul#sbList';
-    } else {
-      debug.textContent += ' OK\n2. Начинаю загрузку публикаций...';
-      loadPublications();
-    }
-
-    async function loadPublications() {
+    // Загрузка публикаций
+    (async function load() {
       try {
-        debug.textContent += '\n3. Запрашиваю Firestore, section = "' + SECTION + '"...';
-
         const q = query(collection(db, 'publications'), where('section', '==', SECTION));
         const snap = await getDocs(q);
+        console.log('[sb] найдено записей:', snap.size);
 
-        debug.textContent += '\n4. Найдено записей: ' + snap.size;
-
-        if (snap.empty) {
-          debug.textContent += '\n⚠️ Ничего не найдено. Проверь поле section в Firestore.';
-          return;
-        }
+        if (snap.empty) return;
 
         const items = [];
         snap.forEach((d) => items.push({ id: d.id, data: d.data() }));
@@ -120,17 +90,12 @@
           return tb - ta;
         });
 
-        debug.textContent += '\n5. Сортирую и рендерю ' + items.length + ' шт.';
-
         listEl.innerHTML = items.map(renderItem).join('');
-
-        debug.textContent += '\n6. ✅ Готово! Публикации отображены.';
-
+        updateDeleteBtns();
       } catch (err) {
-        debug.textContent += '\n❌ ОШИБКА: ' + err.message;
-        console.error('Publications error:', err);
+        console.error('[sb] ошибка загрузки:', err);
       }
-    }
+    })();
 
     function renderItem(item) {
       const d = item.data;
@@ -170,9 +135,7 @@
       return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
 
-    // Кнопка удаления и роль
-    let currentRole = 'citizen';
-
+    // Роль и кнопка публикации
     onAuthStateChanged(auth, async (user) => {
       const block = document.getElementById('newPublicationBlock');
       if (user) {
@@ -210,10 +173,6 @@
         alert('Ошибка удаления: ' + err.message);
       }
     }
-
-    // Следим за появлением кнопок после рендера
-    const observer = new MutationObserver(() => updateDeleteBtns());
-    observer.observe(listEl, { childList: true });
   </script>
 </body>
 </html>
