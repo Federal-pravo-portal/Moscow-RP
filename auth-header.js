@@ -1,5 +1,5 @@
 // js/auth-header.js
-// Кнопки входа/регистрации в шапке + иконка профиля
+// Кнопки авторизации в шапке + иконка профиля
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -10,96 +10,82 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
   const style = document.createElement('style');
   style.id = 'auth-header-styles';
   style.textContent = `
-    /* Правая группа в шапке — абсолютно прижата к правому краю */
-    .site-header {
-      position: relative !important;
+    .site-header__auth-wrap {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
     }
-    .site-header__right {
-      position: absolute !important;
-      right: 24px !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      z-index: 10 !important;
-    }
-
-    .site-header__auth-slot {
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-    }
-
-    /* Кнопки */
     .site-header__auth {
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 7px !important;
-      padding: 8px 14px !important;
-      font-size: 13px !important;
-      font-weight: 600 !important;
-      font-family: inherit !important;
-      color: #fff !important;
-      background: #c9a24a !important;
-      border-radius: 8px !important;
-      border: none !important;
-      text-decoration: none !important;
-      cursor: pointer !important;
-      white-space: nowrap !important;
-      line-height: 1 !important;
-      transition: opacity .2s ease, transform .15s ease !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: #fff;
+      background: #c9a24a;
+      border-radius: 8px;
+      border: none;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 1;
+      transition: opacity .2s ease, transform .15s ease;
     }
     .site-header__auth:hover {
-      opacity: .88 !important;
-      transform: translateY(-1px) !important;
+      opacity: .88;
+      transform: translateY(-1px);
     }
     .site-header__auth--outline {
-      background: transparent !important;
-      border: 1.5px solid #c9a24a !important;
-      color: #c9a24a !important;
+      background: transparent;
+      border: 1.5px solid #c9a24a;
+      color: #c9a24a;
     }
     .site-header__auth--outline:hover {
-      background: #c9a24a !important;
-      color: #fff !important;
+      background: #c9a24a;
+      color: #fff;
     }
-    .site-header__auth svg { flex-shrink: 0 !important; }
+    .site-header__auth svg { flex-shrink: 0; }
     .site-header__auth-name {
-      max-width: 130px !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      white-space: nowrap !important;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .site-header__auth-badge {
-      background: #fff !important;
-      color: #c9a24a !important;
-      font-size: 9px !important;
-      font-weight: 800 !important;
-      letter-spacing: .05em !important;
-      padding: 3px 6px !important;
-      border-radius: 4px !important;
-      text-transform: uppercase !important;
+      background: #fff;
+      color: #c9a24a;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
-
-    /* Мобильные */
     @media (max-width: 900px) {
-      .site-header__right { right: 16px !important; gap: 8px !important; }
-      .site-header__auth { padding: 7px 10px !important; font-size: 12px !important; }
-      .site-header__auth-name { max-width: 80px !important; }
-      .site-header__auth--register { display: none !important; }
+      .site-header__auth-wrap { right: 16px; gap: 8px; }
+      .site-header__auth { padding: 7px 10px; font-size: 12px; }
+      .site-header__auth-name { max-width: 80px; }
+      .site-header__auth--register { display: none; }
     }
     @media (max-width: 640px) {
-      .site-header__right { right: 12px !important; }
-      .site-header__auth-name { display: none !important; }
-      .site-header__auth-badge { display: none !important; }
+      .site-header__auth-wrap { right: 12px; }
+      .site-header__auth-name { display: none; }
+      .site-header__auth-badge { display: none; }
     }
   `;
   document.head.appendChild(style);
 })();
 
-// ---------- Разметка кнопок ----------
-function renderGuest(slot) {
-  slot.innerHTML = `
+// ---------- Разметка ----------
+function renderGuest(wrap) {
+  wrap.innerHTML = `
     <a href="login.html" class="site-header__auth site-header__auth--outline" title="Войти">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
@@ -120,13 +106,13 @@ function renderGuest(slot) {
   `;
 }
 
-function renderUser(slot, user, isAdmin) {
+function renderUser(wrap, user, isAdmin) {
   const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Профиль');
   const safeName = String(name).replace(/[<>&"']/g, (c) => ({
     '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
   }[c]));
 
-  slot.innerHTML = `
+  wrap.innerHTML = `
     <a href="profile.html" class="site-header__auth" title="Личный кабинет">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -143,40 +129,34 @@ function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Создаём правую группу (если её нет)
-  let rightGroup = header.querySelector('.site-header__right');
-  if (!rightGroup) {
-    rightGroup = document.createElement('div');
-    rightGroup.className = 'site-header__right';
-
-    // Переносим в неё все иконки .site-header__discord
-    const icons = Array.from(header.querySelectorAll('.site-header__discord'));
-    icons.forEach((icon) => rightGroup.appendChild(icon));
-
-    header.appendChild(rightGroup);
+  // Если шапка статичная — делаем relative, чтобы absolute-обёртка работала.
+  // Если она уже absolute/fixed/relative (как на главной) — не трогаем.
+  const pos = getComputedStyle(header).position;
+  if (pos === 'static') {
+    header.style.position = 'relative';
   }
 
-  // Слот для кнопок авторизации
-  let slot = rightGroup.querySelector('.site-header__auth-slot');
-  if (!slot) {
-    slot = document.createElement('div');
-    slot.className = 'site-header__auth-slot';
-    rightGroup.insertBefore(slot, rightGroup.firstChild);
+  // Создаём обёртку
+  let wrap = header.querySelector('.site-header__auth-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'site-header__auth-wrap';
+    header.appendChild(wrap);
   }
 
-  renderGuest(slot);
+  renderGuest(wrap);
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      renderGuest(slot);
+      renderGuest(wrap);
       return;
     }
     let isAdmin = false;
     try {
       const token = await user.getIdTokenResult();
       isAdmin = token.claims.role === 'admin';
-    } catch (e) { /* игнорируем */ }
-    renderUser(slot, user, isAdmin);
+    } catch (e) {}
+    renderUser(wrap, user, isAdmin);
   });
 }
 
