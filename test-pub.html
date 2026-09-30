@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Диагностика публикаций</title>
+  <style>
+    body { font-family: monospace; font-size: 14px; padding: 20px; background: #f5f5f5; color: #222; line-height: 1.6; }
+    h1 { font-size: 18px; }
+    .step { padding: 10px 14px; margin: 10px 0; border-radius: 6px; border-left: 4px solid; }
+    .ok { background: #eaf6ec; border-color: #1a6b31; }
+    .fail { background: #fdecec; border-color: #b3261e; }
+    .wait { background: #fff8e1; border-color: #c9a24a; }
+    pre { background: #fff; padding: 10px; border-radius: 4px; overflow-x: auto; border: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+
+  <h1>Диагностика публикаций</h1>
+  <div id="log"></div>
+
+  <script type="module">
+    const log = document.getElementById('log');
+
+    function step(text, type) {
+      const div = document.createElement('div');
+      div.className = 'step ' + (type || 'wait');
+      div.innerHTML = text;
+      log.appendChild(div);
+      return div;
+    }
+
+    function info(label, value) {
+      return '<b>' + label + ':</b> <pre>' + JSON.stringify(value, null, 2) + '</pre>';
+    }
+
+    step('1. Скрипт запущен. Проверяю URL...');
+    const fileName = window.location.pathname.split('/').pop();
+    step('2. Имя файла: <code>' + fileName + '</code>');
+
+    try {
+      step('3. Загружаю firebase-config.js...');
+      const mod = await import('./js/firebase-config.js');
+      step('✅ firebase-config.js загружен. Экспорты: ' + Object.keys(mod).join(', '), 'ok');
+
+      const { db, auth } = mod;
+      step('✅ db и auth получены.', 'ok');
+
+      step('4. Импортирую Firestore...');
+      const fs = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      step('✅ Firestore SDK загружен.', 'ok');
+
+      step('5. Запрашиваю ВСЕ публикации (без фильтра)...');
+      const allSnap = await fs.getDocs(fs.collection(db, 'publications'));
+      step('📦 Всего записей в коллекции publications: <b>' + allSnap.size + '</b>',
+           allSnap.size > 0 ? 'ok' : 'fail');
+
+      if (allSnap.size > 0) {
+        const arr = [];
+        allSnap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
+        step('6. Содержимое коллекции:' + info('Публикации', arr));
+
+        step('7. Проверяю фильтр по section = "sb"...');
+        const q = fs.query(fs.collection(db, 'publications'), fs.where('section', '==', 'sb'));
+        const filtered = await fs.getDocs(q);
+        step('📦 Найдено с section="sb": <b>' + filtered.size + '</b>',
+             filtered.size > 0 ? 'ok' : 'fail');
+      } else {
+        step('⚠️ Коллекция publications пуста или недоступна для чтения.', 'fail');
+        step('Возможные причины:<br>- правила Firestore не опубликованы<br>- это другой проект Firebase<br>- у вас нет прав на чтение');
+      }
+
+    } catch (err) {
+      step('❌ ОШИБКА: ' + err.message + '<pre>' + (err.stack || '') + '</pre>', 'fail');
+    }
+  </script>
+</body>
+</html>
