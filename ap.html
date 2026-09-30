@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Постановления Администрации Президента Российской Федерации</title>
   <meta name="description" content="Постановления Администрации Президента Российской Федерации.">
+  <link rel="icon" type="image/png" href="ikon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
+    /* Сюда вставь свой старый <style> из ap.html (список указов) */
     .ukazy-list { list-style: none; margin: 0; padding: 0; }
     .ukazy-item { padding: 28px 0; border-bottom: 1px solid #e8e8e8; }
     .ukazy-item:first-child { padding-top: 0; }
@@ -24,7 +26,6 @@
     }
     .ukazy-item__date-icon { display: inline-block; width: 14px; height: 16px; flex-shrink: 0; color: #c9a24a; }
     .ukazy-item__desc { font-size: 16px; color: #333333; margin: 0; line-height: 1.6; }
-
     .ukazy-item__image {
       margin: 16px 0;
       max-width: 100%;
@@ -40,7 +41,6 @@
       border: none;
       border-radius: 0;
     }
-
     @media (max-width: 640px) {
       .ukazy-item { padding: 22px 0; }
       .ukazy-item__title { font-size: 20px; margin-bottom: 10px; }
@@ -53,9 +53,9 @@
 
   <header class="site-header">
     <nav class="site-header__menu">
-      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="fz.html" class="site-header__link is-current">Федеральное законодательство</a>
       <a href="gos.html" class="site-header__link">Государственное руководство</a>
-      <a href="akty.html" class="site-header__link is-current">Акты</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
     </nav>
     <a href="index.html" class="site-header__title">Moscow RP</a>
     <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
@@ -72,23 +72,6 @@
     </header>
 
     <ul class="ukazy-list">
-
-      <li class="ukazy-item">
-        <h2 class="ukazy-item__title">Постановление Администрации Президента Российской Федерации №1</h2>
-
-        <p class="ukazy-item__date">
-          <svg class="ukazy-item__date-icon" viewBox="0 0 14 16" fill="currentColor" aria-hidden="true">
-            <path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/>
-          </svg>
-          <span>02 сентября 2026 года</span>
-        </p>
-
-        <div class="ukazy-item__image">
-          <img src="ap1.jpg" alt="Постановление Администрации Президента Российской Федерации №1">
-        </div>
-
-        <p class="ukazy-item__desc">О назначении на должность</p>
-      </li>
 
     </ul>
   </main>
