@@ -11,19 +11,23 @@
   <style>
     .sb-list { list-style: none; margin: 0; padding: 0; }
     .sb-item { padding: 24px 0; border-bottom: 1px solid #e8e8e8; }
-    .sb-item:first-child { padding-top: 0; }
-    .sb-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .sb-item__link { display: block; color: inherit; text-decoration: none; transition: opacity 0.2s ease; }
-    .sb-item__link:hover { opacity: 0.7; }
-    .sb-item__title { font-size: 22px; font-weight: 700; color: #111111; margin: 0 0 10px; line-height: 1.3; letter-spacing: 0.01em; text-transform: uppercase; }
-    .sb-item__date { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: #666666; margin: 0 0 10px; line-height: 1.4; }
-    .sb-item__date-icon { display: inline-block; width: 14px; height: 16px; flex-shrink: 0; color: #c9a24a; }
-    .sb-item__desc { font-size: 16px; color: #333333; margin: 0; line-height: 1.6; }
-    @media (max-width: 640px) {
-      .sb-item { padding: 18px 0; }
-      .sb-item__title { font-size: 17px; }
-      .sb-item__date { font-size: 14px; }
-      .sb-item__desc { font-size: 15px; }
+
+    .dyn-pub { padding: 24px 0; border-bottom: 1px solid #e8e8e8; position: relative; }
+    .dyn-pub:first-child { padding-top: 0; }
+    .dyn-pub:last-child { border-bottom: none; padding-bottom: 0; }
+    .dyn-pub__link { display: block; color: inherit; text-decoration: none; transition: opacity 0.2s ease; padding-right: 44px; }
+    .dyn-pub__link:hover { opacity: 0.75; }
+    .dyn-pub__title { font-size: 22px; font-weight: 700; color: #111; margin: 0 0 10px; line-height: 1.3; letter-spacing: 0.01em; text-transform: uppercase; }
+    .dyn-pub__date { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: #666; margin: 0 0 10px; line-height: 1.4; }
+    .dyn-pub__date svg { color: #c9a24a; flex-shrink: 0; }
+    .dyn-pub__desc { font-size: 16px; color: #333; margin: 0; line-height: 1.6; }
+
+    /* Отладка — потом уберём */
+    #pubDebug {
+      margin: 20px 0; padding: 14px 18px;
+      background: #fff8e1; border: 1px solid #ffe082;
+      border-radius: 8px; font-family: monospace; font-size: 12px;
+      color: #333; white-space: pre-wrap; line-height: 1.6;
     }
   </style>
 </head>
@@ -56,25 +60,91 @@
       </a>
     </div>
 
-    <ul class="sb-list">
+    <div id="pubDebug">1. Скрипт запущен.</div>
 
-    </ul>
+    <ul class="sb-list" id="sbList"></ul>
   </main>
 
-  <script type="module" src="js/publications.js?v=5"></script>
   <script type="module">
-    import { auth } from "./js/firebase-config.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    onAuthStateChanged(auth, async (user) => {
-      const block = document.getElementById('newPublicationBlock');
-      if (!block) return;
-      if (!user) { block.style.display = 'none'; return; }
-      try {
-        const token = await user.getIdTokenResult();
-        const role = token.claims.role;
-        block.style.display = (role === 'government' || role === 'editor') ? 'block' : 'none';
-      } catch (e) { block.style.display = 'none'; }
-    });
+    const dbg = document.getElementById('pubDebug');
+    const listEl = document.getElementById('sbList');
+    function log(t) { dbg.textContent += '\n' + t; }
+
+    try {
+      log('2. Импортирую firebase-config.js...');
+      const mod = await import('./js/firebase-config.js');
+      const { db, auth } = mod;
+      log('✅ Firebase загружен. Экспорты: ' + Object.keys(mod).join(', '));
+
+      log('3. Проверяю <ul id="sbList">: ' + (listEl ? 'найден' : '❌ НЕ НАЙДЕН'));
+
+      const fs = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      log('4. Firestore SDK загружен.');
+
+      log('5. Запрашиваю публикации с section = "sb"...');
+      const q = fs.query(fs.collection(db, 'publications'), fs.where('section', '==', 'sb'));
+      const snap = await fs.getDocs(q);
+      log('📦 Найдено записей: ' + snap.size);
+
+      if (snap.size === 0) {
+        log('⚠️ Публикаций с section="sb" нет. Проверь значение поля в Firestore.');
+      } else {
+        const items = [];
+        snap.forEach((d) => items.push({ id: d.id, data: d.data() }));
+        items.sort((a, b) => {
+          const ta = a.data.createdAt && a.data.createdAt.toMillis ? a.data.createdAt.toMillis() : 0;
+          const tb = b.data.createdAt && b.data.createdAt.toMillis ? b.data.createdAt.toMillis() : 0;
+          return tb - ta;
+        });
+        log('6. Рендерю ' + items.length + ' шт.');
+
+        listEl.innerHTML = items.map((item) => {
+          const d = item.data;
+          const date = formatDate(d.createdAt);
+          const title = esc(d.title || 'Без названия');
+          const subtitle = esc(d.subtitle || '');
+          return `
+            <li class="dyn-pub">
+              <a class="dyn-pub__link" href="publication.html?id=${item.id}">
+                <h2 class="dyn-pub__title">${title}</h2>
+                <p class="dyn-pub__date">
+                  <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
+                  <span>${date}</span>
+                </p>
+                ${subtitle ? `<p class="dyn-pub__desc">${subtitle}</p>` : ''}
+              </a>
+            </li>
+          `;
+        }).join('');
+        log('✅ Готово!');
+      }
+
+      // Роль для кнопки
+      const { onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+      onAuthStateChanged(auth, async (user) => {
+        const block = document.getElementById('newPublicationBlock');
+        if (!block) return;
+        if (!user) { block.style.display = 'none'; return; }
+        try {
+          const token = await user.getIdTokenResult();
+          const role = token.claims.role;
+          block.style.display = (role === 'government' || role === 'editor') ? 'block' : 'none';
+        } catch (e) { block.style.display = 'none'; }
+      });
+    } catch (err) {
+      log('❌ ОШИБКА: ' + err.message);
+      console.error(err);
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' года';
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
   </script>
 </body>
 </html>
