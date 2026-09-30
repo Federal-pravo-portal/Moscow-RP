@@ -1275,17 +1275,14 @@ body {
    ============================================ */
 
 .site-header__right {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.site-header__auth-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  z-index: 20;
 }
 
 .site-header__auth {
@@ -1323,9 +1320,7 @@ body {
   color: #ffffff;
 }
 
-.site-header__auth svg {
-  flex-shrink: 0;
-}
+.site-header__auth svg { flex-shrink: 0; }
 
 .site-header__auth-name {
   max-width: 130px;
@@ -1346,15 +1341,15 @@ body {
 }
 
 @media (max-width: 960px) {
-  .site-header__right { gap: 8px; }
+  .site-header__right { right: 20px; gap: 8px; }
   .site-header__auth { padding: 7px 10px; font-size: 12px; }
   .site-header__auth-name { max-width: 80px; }
   .site-header__auth--register { display: none; }
 }
 
 @media (max-width: 640px) {
+  .site-header__right { right: 16px; gap: 6px; }
   .site-header__auth-name { display: none; }
   .site-header__auth-badge { display: none; }
   .site-header__auth { padding: 6px 8px; font-size: 11px; }
-  .site-header__right { gap: 6px; }
 }

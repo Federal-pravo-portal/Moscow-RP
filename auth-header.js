@@ -1,5 +1,5 @@
 // js/auth-header.js
-// Кнопки авторизации в шапке — вставляются между поиском и Discord
+// Кнопки авторизации в шапке — жёстко прижаты вправо
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -48,35 +48,41 @@ function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // 1. Собираем правую группу: search → [сюда кнопки] → discord
+  // Собираем правую группу: [кнопки] + search + discord
   let rightGroup = header.querySelector('.site-header__right');
   if (!rightGroup) {
     rightGroup = document.createElement('div');
     rightGroup.className = 'site-header__right';
 
-    // Находим все иконки в шапке
+    // Переносим все иконки .site-header__discord внутрь rightGroup
     const icons = Array.from(header.querySelectorAll('.site-header__discord'));
-
-    // Последняя иконка в HTML — Discord, предпоследняя — поиск
-    // Переносим их в rightGroup: сначала все, потом вставим кнопки между ними
     icons.forEach((icon) => rightGroup.appendChild(icon));
 
     header.appendChild(rightGroup);
   }
 
-  // 2. Вставляем wrap с кнопками ПЕРЕД последней иконкой (перед Discord)
+  // ЖЁСТКО прибиваем правую группу — независимо от style.css
+  rightGroup.style.cssText = [
+    'position: absolute',
+    'right: 40px',
+    'top: 50%',
+    'transform: translateY(-50%)',
+    'display: inline-flex',
+    'align-items: center',
+    'gap: 12px',
+    'z-index: 20'
+  ].join(' !important;') + ' !important';
+
+  // Слот для кнопок — в самое НАЧАЛО правой группы (перед search)
   let wrap = rightGroup.querySelector('.site-header__auth-wrap');
   if (!wrap) {
     wrap = document.createElement('div');
     wrap.className = 'site-header__auth-wrap';
-
-    const lastIcon = rightGroup.lastElementChild;
-    if (lastIcon) {
-      rightGroup.insertBefore(wrap, lastIcon);
-    } else {
-      rightGroup.appendChild(wrap);
-    }
+    rightGroup.insertBefore(wrap, rightGroup.firstChild);
   }
+
+  // Жёсткий стиль обёртки
+  wrap.style.cssText = 'display: inline-flex !important; align-items: center !important; gap: 8px !important; position: static !important; right: auto !important; left: auto !important; top: auto !important; transform: none !important;';
 
   renderGuest(wrap);
 
