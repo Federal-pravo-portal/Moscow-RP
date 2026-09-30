@@ -1,5 +1,5 @@
 // js/auth-header.js
-// Автоматически перестраивает шапку и добавляет кнопку "Войти" / "Профиль"
+// Автоматически перестраивает шапку и добавляет кнопку входа / профиля
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -10,39 +10,46 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
   const style = document.createElement('style');
   style.id = 'auth-header-styles';
   style.textContent = `
+    /* Grid из 3 колонок. Наложение исключено. */
     .site-header {
-      display: flex !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
       align-items: center !important;
-      justify-content: space-between !important;
       gap: 16px !important;
       position: relative !important;
     }
-    .site-header__left,
-    .site-header__center,
-    .site-header__right {
+    .site-header__left {
+      grid-column: 1;
       display: flex !important;
       align-items: center !important;
       gap: 12px !important;
-    }
-    .site-header__left {
-      flex-shrink: 0 !important;
+      justify-self: start !important;
+      min-width: 0 !important;
     }
     .site-header__center {
-      flex: 1 1 auto !important;
+      grid-column: 2;
+      display: flex !important;
+      align-items: center !important;
       justify-content: center !important;
+      justify-self: center !important;
       min-width: 0 !important;
     }
     .site-header__right {
-      flex-shrink: 0 !important;
-      justify-content: flex-end !important;
+      grid-column: 3;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      justify-self: end !important;
     }
 
-    /* Сброс возможного абсолютного позиционирования у заголовка */
+    /* Сброс абсолютного позиционирования у заголовка */
+    .site-header__title,
     .site-header__center .site-header__title {
       position: static !important;
       left: auto !important;
       right: auto !important;
       top: auto !important;
+      bottom: auto !important;
       transform: none !important;
       margin: 0 !important;
       white-space: nowrap !important;
@@ -51,6 +58,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
     .site-header__auth-slot {
       display: inline-flex;
       align-items: center;
+      gap: 8px;
     }
     .site-header__auth {
       display: inline-flex;
@@ -70,6 +78,15 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
     .site-header__auth:hover {
       opacity: 0.88;
       transform: translateY(-1px);
+    }
+    .site-header__auth--outline {
+      background: transparent;
+      border: 1.5px solid #c9a24a;
+      color: #c9a24a;
+    }
+    .site-header__auth--outline:hover {
+      background: #c9a24a;
+      color: #fff;
     }
     .site-header__auth svg { flex-shrink: 0; }
     .site-header__auth-name {
@@ -91,44 +108,55 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
 
     @media (max-width: 1100px) {
       .site-header { gap: 10px !important; }
-      .site-header__left,
-      .site-header__center,
-      .site-header__right { gap: 8px !important; }
     }
     @media (max-width: 900px) {
       .site-header__auth { padding: 7px 10px; font-size: 13px; }
       .site-header__auth-name { max-width: 80px; }
       .site-header__auth-badge { font-size: 9px; padding: 2px 5px; }
+      .site-header__auth--register { display: none !important; }
     }
     @media (max-width: 700px) {
       .site-header {
-        flex-wrap: wrap !important;
-        justify-content: space-between !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        grid-template-areas:
+          "left right"
+          "center center" !important;
+        gap: 8px 12px !important;
       }
-      .site-header__left { order: 1; }
-      .site-header__right { order: 2; }
+      .site-header__left { grid-area: left; }
+      .site-header__right { grid-area: right; }
       .site-header__center {
-        order: 3;
-        flex-basis: 100% !important;
+        grid-area: center;
+        justify-self: start !important;
         justify-content: flex-start !important;
-        margin-top: 4px;
       }
+    }
+    @media (max-width: 600px) {
       .site-header__auth-name { display: none; }
     }
   `;
   document.head.appendChild(style);
 })();
 
-// ---------- Разметка кнопки ----------
+// ---------- Кнопки ----------
 function renderGuest(slot) {
   slot.innerHTML = `
-    <a href="login.html" class="site-header__auth" title="Войти или зарегистрироваться">
+    <a href="login.html" class="site-header__auth site-header__auth--outline" title="Войти">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
         <polyline points="10 17 15 12 10 7"/>
         <line x1="15" y1="12" x2="3" y2="12"/>
       </svg>
       <span>Войти</span>
+    </a>
+    <a href="register.html" class="site-header__auth site-header__auth--register" title="Зарегистрироваться">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <line x1="19" y1="8" x2="19" y2="14"/>
+        <line x1="22" y1="11" x2="16" y2="11"/>
+      </svg>
+      <span>Регистрация</span>
     </a>
   `;
 }
@@ -151,31 +179,29 @@ function renderUser(slot, user, isAdmin) {
   `;
 }
 
-// ---------- Перестройка шапки ----------
+// ---------- Перестройка шапки в 3 зоны ----------
 function restructureHeader(header) {
-  // Если уже перестроено — выходим
   if (header.querySelector('.site-header__left')) return;
 
   const menu = header.querySelector('.site-header__menu');
   const title = header.querySelector('.site-header__title');
   const icons = Array.from(header.querySelectorAll('.site-header__discord'));
 
-  const leftWrap = document.createElement('div');
-  leftWrap.className = 'site-header__left';
-  const centerWrap = document.createElement('div');
-  centerWrap.className = 'site-header__center';
-  const rightWrap = document.createElement('div');
-  rightWrap.className = 'site-header__right';
+  const left = document.createElement('div');
+  left.className = 'site-header__left';
+  const center = document.createElement('div');
+  center.className = 'site-header__center';
+  const right = document.createElement('div');
+  right.className = 'site-header__right';
 
-  if (menu) leftWrap.appendChild(menu);
-  if (title) centerWrap.appendChild(title);
-  icons.forEach((i) => rightWrap.appendChild(i));
+  if (menu) left.appendChild(menu);
+  if (title) center.appendChild(title);
+  icons.forEach((i) => right.appendChild(i));
 
-  // Полностью очищаем шапку и собираем заново
   header.innerHTML = '';
-  header.appendChild(leftWrap);
-  header.appendChild(centerWrap);
-  header.appendChild(rightWrap);
+  header.appendChild(left);
+  header.appendChild(center);
+  header.appendChild(right);
 }
 
 // ---------- Инициализация ----------
@@ -185,22 +211,18 @@ function init() {
 
   restructureHeader(header);
 
-  // Слот для кнопки авторизации — в правой части
-  const rightWrap = header.querySelector('.site-header__right');
-  let slot = rightWrap.querySelector('.site-header__auth-slot');
+  const right = header.querySelector('.site-header__right');
+  let slot = right.querySelector('.site-header__auth-slot');
   if (!slot) {
     slot = document.createElement('div');
     slot.className = 'site-header__auth-slot';
-    rightWrap.insertBefore(slot, rightWrap.firstChild);
+    right.insertBefore(slot, right.firstChild);
   }
 
   renderGuest(slot);
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      renderGuest(slot);
-      return;
-    }
+    if (!user) { renderGuest(slot); return; }
     let isAdmin = false;
     try {
       const token = await user.getIdTokenResult();
