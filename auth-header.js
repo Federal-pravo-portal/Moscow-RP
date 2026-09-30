@@ -10,12 +10,16 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
   const style = document.createElement('style');
   style.id = 'auth-header-styles';
   style.textContent = `
+    .site-header { position: relative; }
     .site-header__right {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      margin-left: auto;
-      flex-shrink: 0;
+      z-index: 5;
     }
     .site-header__auth-slot {
       display: inline-flex;
@@ -57,13 +61,17 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
       border-radius: 4px;
       text-transform: uppercase;
     }
+    @media (max-width: 1100px) {
+      .site-header__right { right: 16px; gap: 8px; }
+    }
     @media (max-width: 900px) {
       .site-header__auth { padding: 7px 10px; font-size: 13px; }
-      .site-header__auth-name { max-width: 100px; }
+      .site-header__auth-name { max-width: 90px; }
       .site-header__auth-badge { font-size: 9px; padding: 2px 5px; }
     }
     @media (max-width: 640px) {
       .site-header__auth-name { display: none; }
+      .site-header__right { gap: 6px; }
     }
   `;
   document.head.appendChild(style);
@@ -106,20 +114,25 @@ function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Шаг 1. Создаём группу справа, если её нет
+  // Убедимся, что header relative
+  if (getComputedStyle(header).position === 'static') {
+    header.style.position = 'relative';
+  }
+
+  // Создаём правую группу, если её нет
   let rightGroup = header.querySelector('.site-header__right');
   if (!rightGroup) {
     rightGroup = document.createElement('div');
     rightGroup.className = 'site-header__right';
 
-    // Переносим все иконки (search, discord) в эту группу
+    // Переносим все иконки (поиск, discord)
     const icons = header.querySelectorAll('.site-header__discord');
     icons.forEach((icon) => rightGroup.appendChild(icon));
 
     header.appendChild(rightGroup);
   }
 
-  // Шаг 2. Создаём слот для кнопки авторизации внутри правой группы
+  // Слот для кнопки
   let slot = rightGroup.querySelector('.site-header__auth-slot');
   if (!slot) {
     slot = document.createElement('div');
@@ -127,7 +140,6 @@ function init() {
     rightGroup.insertBefore(slot, rightGroup.firstChild);
   }
 
-  // Пока грузится — показываем "Войти"
   renderGuest(slot);
 
   onAuthStateChanged(auth, async (user) => {
@@ -135,13 +147,11 @@ function init() {
       renderGuest(slot);
       return;
     }
-
     let isAdmin = false;
     try {
       const token = await user.getIdTokenResult();
       isAdmin = token.claims.role === 'admin';
-    } catch (e) { /* игнорируем */ }
-
+    } catch (e) {}
     renderUser(slot, user, isAdmin);
   });
 }
