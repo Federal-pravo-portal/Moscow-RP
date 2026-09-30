@@ -1279,10 +1279,17 @@ body {
   right: 40px;
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
   z-index: 20;
+}
+
+.site-header__auth-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .site-header__auth {
