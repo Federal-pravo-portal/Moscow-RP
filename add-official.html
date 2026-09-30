@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новый член руководства — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .off-form { max-width: 640px; margin: 0 auto; padding: 32px 28px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px; }
+    .off-form__field { margin-bottom: 20px; }
+    .off-form__label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
+    .off-form__input, .off-form__select, .off-form__textarea { width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; border: 1.5px solid #d8d8d8; border-radius: 8px; outline: none; box-sizing: border-box; background: #fff; color: #111; transition: border-color .2s ease; }
+    .off-form__input:focus, .off-form__select:focus { border-color: #c9a24a; }
+    .off-form__hint { font-size: 12px; color: #999; margin-top: 6px; }
+
+    /* Загрузка фото */
+    .off-form__photo { display: flex; align-items: center; gap: 20px; }
+    .off-form__photo-preview {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: #eee; flex-shrink: 0;
+      border: 3px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .off-form__photo-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .off-form__photo-preview--empty { display: flex; align-items: center; justify-content: center; color: #bbb; }
+    .off-form__file { display: inline-block; padding: 12px 20px; background: #fff; border: 1.5px dashed #c9a24a; border-radius: 8px; font-size: 14px; color: #666; cursor: pointer; }
+    .off-form__file input { display: none; }
+    .off-form__file:hover { background: #fff8e6; }
+
+    .off-form__btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; background: #c9302c; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .off-form__btn:hover { background: #a82822; }
+    .off-form__btn:disabled { opacity: .6; cursor: not-allowed; }
+    .off-form__message { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; display: none; }
+    .off-form__message.is-error { display: block; background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd; }
+    .off-form__message.is-success { display: block; background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf; }
+    .off-form__progress { margin-top: 12px; height: 6px; background: #eee; border-radius: 4px; overflow: hidden; display: none; }
+    .off-form__progress.is-visible { display: block; }
+    .off-form__progress-bar { height: 100%; background: #c9a24a; width: 0; transition: width .3s ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link is-current">Государственное руководство</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+  </header>
+
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title">Новый член руководства</h1>
+      <p class="page__subtitle">Заполните данные — фото, ФИО, должность, звание, дата назначения</p>
+    </header>
+
+    <form class="off-form" id="offForm">
+      <div class="off-form__field">
+        <label class="off-form__label">Фотография</label>
+        <div class="off-form__photo">
+          <div class="off-form__photo-preview off-form__photo-preview--empty" id="photoPreview">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <label class="off-form__file">
+            <input type="file" id="photo" accept="image/*" required>
+            Выбрать фото
+          </label>
+        </div>
+        <div class="off-form__hint">Фото автоматически обрежется по кругу. Рекомендуется квадратное изображение.</div>
+      </div>
+
+      <div class="off-form__field">
+        <label class="off-form__label" for="fullname">Фамилия Имя Отчество</label>
+        <input class="off-form__input" type="text" id="fullname" placeholder="Иванов Иван Иванович" required>
+      </div>
+
+      <div class="off-form__field">
+        <label class="off-form__label" for="position">Должность</label>
+        <input class="off-form__input" type="text" id="position" placeholder="Министр внутренних дел" required>
+      </div>
+
+      <div class="off-form__field">
+        <label class="off-form__label" for="rank">Звание</label>
+        <input class="off-form__input" type="text" id="rank" placeholder="Генерал-лейтенант полиции" required>
+        <div class="off-form__hint">Отображается под должностью.</div>
+      </div>
+
+      <div class="off-form__field">
+        <label class="off-form__label" for="appointedAt">Дата назначения</label>
+        <input class="off-form__input" type="date" id="appointedAt" required>
+      </div>
+
+      <button class="off-form__btn" type="submit" id="submitBtn">Добавить</button>
+
+      <div class="off-form__progress" id="progress"><div class="off-form__progress-bar" id="progressBar"></div></div>
+      <div class="off-form__message" id="message"></div>
+    </form>
+  </main>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
+    const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
+    const form = document.getElementById('offForm');
+    const photoInput = document.getElementById('photo');
+    const photoPreview = document.getElementById('photoPreview');
+    const submitBtn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
+
+    let currentUser = null;
+    let currentRole = 'citizen';
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      currentUser = user;
+      try {
+        const token = await user.getIdTokenResult();
+        currentRole = token.claims.role || 'citizen';
+      } catch (e) {}
+      if (currentRole !== 'government') {
+        showMessage('Только Правительство может добавлять членов руководства.', 'error');
+        submitBtn.disabled = true;
+      }
+    });
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = 'off-form__message ' + (type === 'error' ? 'is-error' : 'is-success');
+    }
+
+    // Превью фото
+    photoInput.addEventListener('change', () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      photoPreview.classList.remove('off-form__photo-preview--empty');
+      photoPreview.innerHTML = '<img src="' + url + '" alt="Предпросмотр">';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) { showMessage('Вы не авторизованы.', 'error'); return; }
+      if (currentRole !== 'government') { showMessage('Недостаточно прав.', 'error'); return; }
+
+      const fullname = document.getElementById('fullname').value.trim();
+      const position = document.getElementById('position').value.trim();
+      const rank = document.getElementById('rank').value.trim();
+      const appointedAt = document.getElementById('appointedAt').value;
+      const file = photoInput.files[0];
+
+      if (!fullname || !position || !rank || !appointedAt || !file) {
+        showMessage('Заполните все поля.', 'error');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showMessage('Файл больше 10 МБ.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Загрузка...';
+      progress.classList.add('is-visible');
+      progressBar.style.width = '0%';
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload', { method: 'POST', body: formData });
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error((err.error && err.error.message) || 'Ошибка Cloudinary');
+        }
+        const data = await response.json();
+        const photoUrl = data.secure_url;
+        progressBar.style.width = '100%';
+
+        await addDoc(collection(db, 'officials'), {
+          fullname: fullname,
+          position: position,
+          rank: rank,
+          appointedAt: appointedAt,
+          photoUrl: photoUrl,
+          createdBy: currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+
+        showMessage('Готово! Перенаправление...', 'success');
+        setTimeout(() => { window.location.href = 'gos.html'; }, 1200);
+
+      } catch (err) {
+        console.error(err);
+        showMessage('Ошибка: ' + err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Добавить';
+        progress.classList.remove('is-visible');
+      }
+    });
+  </script>
+</body>
+</html>
