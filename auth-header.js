@@ -1,5 +1,5 @@
 // js/auth-header.js
-// Автоматически вставляет в шапку кнопку "Войти" или "Профиль"
+// Автоматически перестраивает шапку и добавляет кнопку "Войти" / "Профиль"
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -10,17 +10,44 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
   const style = document.createElement('style');
   style.id = 'auth-header-styles';
   style.textContent = `
-    .site-header { position: relative; }
-    .site-header__right {
-      position: absolute;
-      right: 24px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 5;
+    .site-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 16px !important;
+      position: relative !important;
     }
+    .site-header__left,
+    .site-header__center,
+    .site-header__right {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    .site-header__left {
+      flex-shrink: 0 !important;
+    }
+    .site-header__center {
+      flex: 1 1 auto !important;
+      justify-content: center !important;
+      min-width: 0 !important;
+    }
+    .site-header__right {
+      flex-shrink: 0 !important;
+      justify-content: flex-end !important;
+    }
+
+    /* Сброс возможного абсолютного позиционирования у заголовка */
+    .site-header__center .site-header__title {
+      position: static !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      transform: none !important;
+      margin: 0 !important;
+      white-space: nowrap !important;
+    }
+
     .site-header__auth-slot {
       display: inline-flex;
       align-items: center;
@@ -46,7 +73,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
     }
     .site-header__auth svg { flex-shrink: 0; }
     .site-header__auth-name {
-      max-width: 140px;
+      max-width: 130px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -61,23 +88,38 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
       border-radius: 4px;
       text-transform: uppercase;
     }
+
     @media (max-width: 1100px) {
-      .site-header__right { right: 16px; gap: 8px; }
+      .site-header { gap: 10px !important; }
+      .site-header__left,
+      .site-header__center,
+      .site-header__right { gap: 8px !important; }
     }
     @media (max-width: 900px) {
       .site-header__auth { padding: 7px 10px; font-size: 13px; }
-      .site-header__auth-name { max-width: 90px; }
+      .site-header__auth-name { max-width: 80px; }
       .site-header__auth-badge { font-size: 9px; padding: 2px 5px; }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
+      .site-header {
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+      }
+      .site-header__left { order: 1; }
+      .site-header__right { order: 2; }
+      .site-header__center {
+        order: 3;
+        flex-basis: 100% !important;
+        justify-content: flex-start !important;
+        margin-top: 4px;
+      }
       .site-header__auth-name { display: none; }
-      .site-header__right { gap: 6px; }
     }
   `;
   document.head.appendChild(style);
 })();
 
-// ---------- Разметка ----------
+// ---------- Разметка кнопки ----------
 function renderGuest(slot) {
   slot.innerHTML = `
     <a href="login.html" class="site-header__auth" title="Войти или зарегистрироваться">
@@ -109,35 +151,47 @@ function renderUser(slot, user, isAdmin) {
   `;
 }
 
+// ---------- Перестройка шапки ----------
+function restructureHeader(header) {
+  // Если уже перестроено — выходим
+  if (header.querySelector('.site-header__left')) return;
+
+  const menu = header.querySelector('.site-header__menu');
+  const title = header.querySelector('.site-header__title');
+  const icons = Array.from(header.querySelectorAll('.site-header__discord'));
+
+  const leftWrap = document.createElement('div');
+  leftWrap.className = 'site-header__left';
+  const centerWrap = document.createElement('div');
+  centerWrap.className = 'site-header__center';
+  const rightWrap = document.createElement('div');
+  rightWrap.className = 'site-header__right';
+
+  if (menu) leftWrap.appendChild(menu);
+  if (title) centerWrap.appendChild(title);
+  icons.forEach((i) => rightWrap.appendChild(i));
+
+  // Полностью очищаем шапку и собираем заново
+  header.innerHTML = '';
+  header.appendChild(leftWrap);
+  header.appendChild(centerWrap);
+  header.appendChild(rightWrap);
+}
+
 // ---------- Инициализация ----------
 function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Убедимся, что header relative
-  if (getComputedStyle(header).position === 'static') {
-    header.style.position = 'relative';
-  }
+  restructureHeader(header);
 
-  // Создаём правую группу, если её нет
-  let rightGroup = header.querySelector('.site-header__right');
-  if (!rightGroup) {
-    rightGroup = document.createElement('div');
-    rightGroup.className = 'site-header__right';
-
-    // Переносим все иконки (поиск, discord)
-    const icons = header.querySelectorAll('.site-header__discord');
-    icons.forEach((icon) => rightGroup.appendChild(icon));
-
-    header.appendChild(rightGroup);
-  }
-
-  // Слот для кнопки
-  let slot = rightGroup.querySelector('.site-header__auth-slot');
+  // Слот для кнопки авторизации — в правой части
+  const rightWrap = header.querySelector('.site-header__right');
+  let slot = rightWrap.querySelector('.site-header__auth-slot');
   if (!slot) {
     slot = document.createElement('div');
     slot.className = 'site-header__auth-slot';
-    rightGroup.insertBefore(slot, rightGroup.firstChild);
+    rightWrap.insertBefore(slot, rightWrap.firstChild);
   }
 
   renderGuest(slot);
