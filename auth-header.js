@@ -1,89 +1,10 @@
 // js/auth-header.js
 // Кнопки авторизации в шапке + иконка профиля
+// Стили находятся в style.css
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// ---------- Стили ----------
-(function injectStyles() {
-  if (document.getElementById('auth-header-styles')) return;
-  const style = document.createElement('style');
-  style.id = 'auth-header-styles';
-  style.textContent = `
-    .site-header__auth-wrap {
-      position: absolute;
-      right: 24px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 20;
-    }
-    .site-header__auth {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      color: #fff;
-      background: #c9a24a;
-      border-radius: 8px;
-      border: none;
-      text-decoration: none;
-      cursor: pointer;
-      white-space: nowrap;
-      line-height: 1;
-      transition: opacity .2s ease, transform .15s ease;
-    }
-    .site-header__auth:hover {
-      opacity: .88;
-      transform: translateY(-1px);
-    }
-    .site-header__auth--outline {
-      background: transparent;
-      border: 1.5px solid #c9a24a;
-      color: #c9a24a;
-    }
-    .site-header__auth--outline:hover {
-      background: #c9a24a;
-      color: #fff;
-    }
-    .site-header__auth svg { flex-shrink: 0; }
-    .site-header__auth-name {
-      max-width: 130px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .site-header__auth-badge {
-      background: #fff;
-      color: #c9a24a;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .05em;
-      padding: 3px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-    @media (max-width: 900px) {
-      .site-header__auth-wrap { right: 16px; gap: 8px; }
-      .site-header__auth { padding: 7px 10px; font-size: 12px; }
-      .site-header__auth-name { max-width: 80px; }
-      .site-header__auth--register { display: none; }
-    }
-    @media (max-width: 640px) {
-      .site-header__auth-wrap { right: 12px; }
-      .site-header__auth-name { display: none; }
-      .site-header__auth-badge { display: none; }
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
-// ---------- Разметка ----------
 function renderGuest(wrap) {
   wrap.innerHTML = `
     <a href="login.html" class="site-header__auth site-header__auth--outline" title="Войти">
@@ -124,19 +45,11 @@ function renderUser(wrap, user, isAdmin) {
   `;
 }
 
-// ---------- Инициализация ----------
 function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Если шапка статичная — делаем relative, чтобы absolute-обёртка работала.
-  // Если она уже absolute/fixed/relative (как на главной) — не трогаем.
-  const pos = getComputedStyle(header).position;
-  if (pos === 'static') {
-    header.style.position = 'relative';
-  }
-
-  // Создаём обёртку
+  // Создаём обёртку для кнопок
   let wrap = header.querySelector('.site-header__auth-wrap');
   if (!wrap) {
     wrap = document.createElement('div');
