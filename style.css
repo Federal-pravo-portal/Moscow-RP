@@ -1270,3 +1270,40 @@ body {
     -webkit-tap-highlight-color: transparent;
   }
 }
+/* =====================================================
+   Кнопки авторизации в шапке — прижимаем к правому краю
+   ===================================================== */
+
+.site-header {
+  position: relative !important;
+}
+
+.site-header__right {
+  position: absolute !important;
+  right: 24px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  z-index: 10 !important;
+}
+
+.site-header__auth-slot {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+@media (max-width: 900px) {
+  .site-header__right {
+    right: 16px !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header__right {
+    right: 12px !important;
+  }
+}
