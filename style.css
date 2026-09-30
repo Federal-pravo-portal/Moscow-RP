@@ -1,0 +1,1015 @@
+/* ============================================
+   ФЕДЕРАЛЬНЫЙ ПРАВОВОЙ ПОРТАЛ — ОБЩИЕ СТИЛИ
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'TildaSans', 'Tilda Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  color: #1a1a1a;
+  background: #ffffff;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   ШАПКА САЙТА (верхнее меню)
+   ============================================ */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+}
+
+.site-header__menu {
+  display: flex;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.site-header__link {
+  color: #e8e8e8;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.site-header__link:hover {
+  color: #ffffff;
+}
+
+.site-header__link.is-current {
+  color: #ffffff;
+  position: relative;
+}
+
+.site-header__link.is-current::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+.site-header__title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.site-header__title:hover {
+  opacity: 0.85;
+}
+
+.site-header__discord {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: rgba(88, 101, 242, 0.15);
+  border: 1.5px solid rgba(88, 101, 242, 0.6);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.site-header__discord:hover {
+  background: #5865F2;
+  border-color: #5865F2;
+  transform: scale(1.05);
+}
+
+.site-header__discord svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* ============================================
+   ГЛАВНАЯ — HERO С ГЕРБОМ
+   ============================================ */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  background-color: #1a1a1a;
+  background-image: url('gerb.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 15, 0.72);
+  z-index: 1;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+}
+
+.hero__title {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 40px;
+  letter-spacing: -0.01em;
+}
+
+.hero__subtitle {
+  font-size: 18px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   СЕКЦИЯ С КАРТОЧКАМИ ЗАКОНОВ
+   ============================================ */
+
+.laws {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 96px 32px;
+}
+
+.laws__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 12px;
+}
+
+.laws__subtitle {
+  font-size: 16px;
+  color: #666666;
+  margin-bottom: 48px;
+}
+
+.laws__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.laws__card {
+  display: block;
+  padding: 28px 24px;
+  background: #f7f7f7;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.laws__card:hover {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+  transform: translateY(-2px);
+}
+
+.laws__card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.laws__card-desc {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.5;
+}
+
+.laws__card:hover .laws__card-desc {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ============================================
+   СТРАНИЦА ЗАКОНА — САЙДБАР + КОНТЕНТ
+   ============================================ */
+
+.doc-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 56px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 112px 32px 96px;
+  align-items: start;
+}
+
+.doc-nav {
+  position: sticky;
+  top: 96px;
+  background: #ffffff;
+}
+
+.doc-nav__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888888;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.doc-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.doc-nav__list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.doc-nav__list::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 3px;
+}
+
+.doc-nav__link {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: #3a3a3a;
+  font-size: 13px;
+  line-height: 1.35;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.doc-nav__link:hover {
+  background: #f4f4f4;
+  color: #000000;
+}
+
+.doc-nav__link.is-active {
+  background: #111111;
+  color: #ffffff;
+}
+
+.doc-nav__link.is-active .doc-nav__num {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.doc-nav__num {
+  font-weight: 700;
+  color: #999999;
+  font-size: 12px;
+  text-align: right;
+}
+
+.doc-content {
+  max-width: 780px;
+  min-width: 0;
+}
+
+.doc-content__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 8px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.doc-content__meta {
+  font-size: 14px;
+  color: #888888;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eaeaea;
+  text-align: center;
+}
+
+.doc-chapter {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111111;
+  margin: 56px 0 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #111111;
+  line-height: 1.3;
+  scroll-margin-top: 100px;
+}
+
+.doc-chapter:first-of-type {
+  margin-top: 0;
+}
+
+.doc-article {
+  margin-bottom: 22px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #2a2a2a;
+}
+
+.doc-chapter {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.doc-article strong {
+  display: inline-block;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 4px;
+}
+
+/* ============================================
+   КНОПКА «НАВЕРХ»
+   ============================================ */
+
+.to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  z-index: 90;
+}
+
+.to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.to-top:hover {
+  background: #2a2a2a;
+}
+
+/* ============================================
+   АДАПТИВ
+   ============================================ */
+
+@media (max-width: 960px) {
+  .site-header {
+    padding: 14px 20px;
+  }
+
+  .site-header__menu {
+    display: none;
+  }
+
+  .site-header__title {
+    font-size: 13px;
+  }
+
+  .hero__title {
+    font-size: 40px;
+    margin-bottom: 28px;
+  }
+
+  .hero__subtitle {
+    font-size: 16px;
+  }
+
+  .laws {
+    padding: 64px 20px;
+  }
+
+  .laws__title {
+    font-size: 26px;
+  }
+
+  .doc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 96px 20px 80px;
+    gap: 24px;
+  }
+
+  .doc-nav {
+    position: static;
+    padding: 16px;
+    background: #f7f7f7;
+    border-radius: 12px;
+  }
+
+  .doc-nav__list {
+    max-height: none;
+  }
+
+  .doc-content__title {
+    font-size: 26px;
+  }
+
+  .doc-chapter {
+    font-size: 20px;
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 100px 20px 60px;
+  }
+
+  .hero__title {
+    font-size: 30px;
+  }
+
+  .hero__subtitle {
+    font-size: 15px;
+  }
+
+  .laws {
+    padding: 48px 16px;
+  }
+
+  .laws__title {
+    font-size: 22px;
+  }
+
+  .laws__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-layout {
+    padding: 88px 16px 64px;
+  }
+
+  .doc-content__title {
+    font-size: 22px;
+  }
+
+  .doc-article {
+    font-size: 15px;
+  }
+
+  .to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+}
+/* ============================================
+   СЕКЦИЯ «О ПРОЕКТЕ»
+   ============================================ */
+
+.about {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 96px 32px;
+}
+
+.about__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.about__title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 28px;
+  line-height: 1.2;
+}
+
+.about__text p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #2a2a2a;
+  margin-bottom: 20px;
+}
+
+.about__final {
+  margin-top: 12px;
+  font-size: 17px !important;
+  color: #111111 !important;
+}
+
+.about__gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.about__gallery img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+/* ============================================
+   ФУТЕР
+   ============================================ */
+
+.site-footer {
+  padding: 56px 32px 48px;
+  margin-top: 40px;
+  border-top: 1px dashed #d8d8d8;
+  text-align: center;
+  color: #666666;
+}
+
+.site-footer__copy {
+  font-size: 15px;
+  color: #444444;
+  margin-bottom: 14px;
+}
+
+.site-footer__legal {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #888888;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* Адаптив для новых секций */
+
+@media (max-width: 960px) {
+  .about {
+    padding: 64px 20px;
+  }
+
+  .about__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .about__title {
+    font-size: 28px;
+  }
+
+  .about__gallery img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about {
+    padding: 48px 16px;
+  }
+
+  .about__title {
+    font-size: 24px;
+  }
+
+  .about__text p {
+    font-size: 15px;
+  }
+
+  .about__gallery {
+    gap: 8px;
+  }
+
+  .about__gallery img {
+    height: 140px;
+  }
+
+  .site-footer {
+    padding: 40px 20px 32px;
+  }
+}
+/* ============================================
+   СТРАНИЦА РАЗДЕЛА (fz.html и подобные)
+   ============================================ */
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 140px 32px 96px;
+}
+
+.page__head {
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.page__title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.page__subtitle {
+  font-size: 17px;
+  color: #666666;
+  line-height: 1.55;
+}
+
+/* Активный пункт меню */
+.site-header__link.is-current {
+  color: #ffffff;
+  position: relative;
+}
+
+.site-header__link.is-current::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+/* Кликабельный заголовок в шапке */
+.site-header__title {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.site-header__title:hover {
+  opacity: 0.8;
+}
+
+/* Адаптив */
+@media (max-width: 960px) {
+  .page {
+    padding: 96px 20px 72px;
+  }
+  .page__title {
+    font-size: 32px;
+  }
+  .page__subtitle {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 88px 16px 56px;
+  }
+  .page__title {
+    font-size: 26px;
+  }
+}
+/* ============================================
+   СЕКЦИЯ «О ПРОЕКТЕ»
+   ============================================ */
+
+.about {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 96px 32px;
+}
+
+.about__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.about__title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 28px;
+  line-height: 1.2;
+}
+
+.about__text p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #2a2a2a;
+  margin-bottom: 20px;
+}
+
+.about__final {
+  margin-top: 12px;
+  font-size: 17px !important;
+  color: #111111 !important;
+}
+
+.about__gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.about__gallery img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+@media (max-width: 960px) {
+  .about {
+    padding: 64px 20px;
+  }
+  .about__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .about__title {
+    font-size: 28px;
+  }
+  .about__gallery img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about {
+    padding: 48px 16px;
+  }
+  .about__title {
+    font-size: 24px;
+  }
+  .about__text p {
+    font-size: 15px;
+  }
+  .about__gallery {
+    gap: 8px;
+  }
+  .about__gallery img {
+    height: 140px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .doc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 96px 20px 80px;
+    gap: 20px;
+  }
+
+  .doc-nav {
+    position: static;
+    padding: 0 0 24px;
+    background: transparent;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .doc-nav__toggle {
+    display: none;
+  }
+
+  .doc-nav__title {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .doc-nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 24px;
+  }
+
+  .doc-content__title {
+    font-size: 26px;
+  }
+
+  .doc-chapter {
+    font-size: 20px;
+    margin-top: 40px;
+  }
+
+  .to-top {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+/* ============================================
+   ГЕРБ НА СТРАНИЦАХ ЗАКОНОВ
+   ============================================ */
+
+.doc-content__emblem {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 24px;
+}
+
+.doc-content__emblem img {
+  width: 100%;
+  max-width: 90px;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .doc-content__emblem {
+    margin: 0 0 16px;
+  }
+  .doc-content__emblem img {
+    max-width: 70px;
+  }
+}
+/* ============================================
+   ПРЕАМБУЛА
+   ============================================ */
+
+.doc-preamble {
+  margin: 0 0 40px;
+  padding: 0 0 28px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.doc-preamble p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: #2a2a2a;
+  font-style: italic;
+  text-align: justify;
+}
+
+@media (max-width: 480px) {
+  .doc-preamble {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+  }
+  .doc-preamble p {
+    font-size: 15px;
+    text-align: left;
+  }
+}
+/* ============================================
+   ФИНАЛЬНЫЕ ПРАВИЛА ДЛЯ МОБИЛЬНОЙ ВЕРСИИ
+   ============================================ */
+
+.doc-nav__toggle {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .doc-nav {
+    position: static !important;
+    padding: 0 0 24px !important;
+    background: transparent !important;
+    border-bottom: 1px solid #eaeaea !important;
+  }
+
+  .doc-nav__toggle {
+    display: none !important;
+  }
+
+  .doc-nav__title {
+    display: block !important;
+  }
+
+  .doc-nav__list {
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin-bottom: 24px !important;
+  }
+
+  .doc-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+/* ============================================
+   ПРЕАМБУЛА С ВЫРАВНИВАНИЕМ ПО ПРАВОМУ КРАЮ
+   ============================================ */
+
+.doc-preamble--right p {
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .doc-preamble--right p {
+    text-align: right;
+  }
+}
+/* ============================================
+   УКАЗЫ — УБИРАЕМ ОТСТУПЫ ПОСЛЕ КАРТИНОК
+   ============================================ */
+
+.ukazy-item__image {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  font-size: 0;
+  display: block;
+}
+
+.ukazy-item__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  vertical-align: top;
+}
+
+.ukazy-item__image + .ukazy-item__desc {
+  margin-top: 0;
+}
+
+.ukazy-item {
+  padding-bottom: 0;
+}
+
+.ukazy-item__desc {
+  margin: 0;
+  padding: 0;
+}
