@@ -1,5 +1,5 @@
 // js/auth-header.js
-// Кнопки авторизации в шапке. Позиционирование — через style.css
+// Только наполняет существующий контейнер кнопками
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -45,28 +45,8 @@ function renderUser(wrap, user, isAdmin) {
 }
 
 function init() {
-  const header = document.querySelector('.site-header');
-  if (!header) return;
-
-  // 1. Создаём правую группу и переносим туда иконки
-  let rightGroup = header.querySelector('.site-header__right');
-  if (!rightGroup) {
-    rightGroup = document.createElement('div');
-    rightGroup.className = 'site-header__right';
-
-    const icons = Array.from(header.querySelectorAll('.site-header__discord'));
-    icons.forEach((icon) => rightGroup.appendChild(icon));
-
-    header.appendChild(rightGroup);
-  }
-
-  // 2. Создаём слот для кнопок В НАЧАЛЕ правой группы
-  let wrap = rightGroup.querySelector('.site-header__auth-wrap');
-  if (!wrap) {
-    wrap = document.createElement('div');
-    wrap.className = 'site-header__auth-wrap';
-    rightGroup.insertBefore(wrap, rightGroup.firstChild);
-  }
+  const wrap = document.getElementById('authWrap');
+  if (!wrap) return;
 
   renderGuest(wrap);
 
