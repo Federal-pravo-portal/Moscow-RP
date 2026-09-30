@@ -1271,18 +1271,21 @@ body {
   }
 }
 /* ============================================
-   КНОПКИ АВТОРИЗАЦИИ В ШАПКЕ
+   ПРАВАЯ ГРУППА В ШАПКЕ + КНОПКИ АВТОРИЗАЦИИ
    ============================================ */
 
+.site-header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .site-header__auth-wrap {
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  z-index: 20;
+  gap: 8px;
 }
 
 .site-header__auth {
@@ -1343,14 +1346,15 @@ body {
 }
 
 @media (max-width: 960px) {
-  .site-header__auth-wrap { right: 20px; gap: 8px; }
+  .site-header__right { gap: 8px; }
   .site-header__auth { padding: 7px 10px; font-size: 12px; }
   .site-header__auth-name { max-width: 80px; }
   .site-header__auth--register { display: none; }
 }
 
 @media (max-width: 640px) {
-  .site-header__auth-wrap { right: 16px; }
   .site-header__auth-name { display: none; }
   .site-header__auth-badge { display: none; }
+  .site-header__auth { padding: 6px 8px; font-size: 11px; }
+  .site-header__right { gap: 6px; }
 }

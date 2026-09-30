@@ -1,6 +1,5 @@
 // js/auth-header.js
-// Кнопки авторизации в шапке + иконка профиля
-// Стили находятся в style.css
+// Кнопки авторизации в шапке — вставляются между поиском и Discord
 
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -49,12 +48,34 @@ function init() {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Создаём обёртку для кнопок
-  let wrap = header.querySelector('.site-header__auth-wrap');
+  // 1. Собираем правую группу: search → [сюда кнопки] → discord
+  let rightGroup = header.querySelector('.site-header__right');
+  if (!rightGroup) {
+    rightGroup = document.createElement('div');
+    rightGroup.className = 'site-header__right';
+
+    // Находим все иконки в шапке
+    const icons = Array.from(header.querySelectorAll('.site-header__discord'));
+
+    // Последняя иконка в HTML — Discord, предпоследняя — поиск
+    // Переносим их в rightGroup: сначала все, потом вставим кнопки между ними
+    icons.forEach((icon) => rightGroup.appendChild(icon));
+
+    header.appendChild(rightGroup);
+  }
+
+  // 2. Вставляем wrap с кнопками ПЕРЕД последней иконкой (перед Discord)
+  let wrap = rightGroup.querySelector('.site-header__auth-wrap');
   if (!wrap) {
     wrap = document.createElement('div');
     wrap.className = 'site-header__auth-wrap';
-    header.appendChild(wrap);
+
+    const lastIcon = rightGroup.lastElementChild;
+    if (lastIcon) {
+      rightGroup.insertBefore(wrap, lastIcon);
+    } else {
+      rightGroup.appendChild(wrap);
+    }
   }
 
   renderGuest(wrap);
