@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новая организация — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .org-form { max-width: 640px; margin: 0 auto; padding: 32px 28px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px; }
+    .org-form__field { margin-bottom: 20px; }
+    .org-form__label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
+    .org-form__input, .org-form__select, .org-form__textarea { width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit; border: 1.5px solid #d8d8d8; border-radius: 8px; outline: none; box-sizing: border-box; background: #fff; color: #111; transition: border-color .2s ease; }
+    .org-form__input:focus, .org-form__select:focus, .org-form__textarea:focus { border-color: #c9a24a; }
+    .org-form__textarea { min-height: 100px; resize: vertical; }
+    .org-form__hint { font-size: 12px; color: #999; margin-top: 6px; }
+    .org-form__file { display: block; width: 100%; padding: 14px; background: #fff; border: 1.5px dashed #c9a24a; border-radius: 8px; font-size: 14px; color: #666; cursor: pointer; box-sizing: border-box; }
+    .org-form__file::-webkit-file-upload-button { background: #c9a24a; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-family: inherit; margin-right: 12px; }
+    .org-form__preview { margin-top: 14px; max-width: 160px; max-height: 160px; border-radius: 12px; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .org-form__preview.is-visible { display: block; }
+    .org-form__btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; background: #c9302c; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .org-form__btn:hover { background: #a82822; }
+    .org-form__btn:disabled { opacity: .6; cursor: not-allowed; }
+    .org-form__message { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; display: none; }
+    .org-form__message.is-error { display: block; background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd; }
+    .org-form__message.is-success { display: block; background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf; }
+    .org-form__progress { margin-top: 12px; height: 6px; background: #eee; border-radius: 4px; overflow: hidden; display: none; }
+    .org-form__progress.is-visible { display: block; }
+    .org-form__progress-bar { height: 100%; background: #c9a24a; width: 0; transition: width .3s ease; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link is-current">Организации</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+  </header>
+
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title">Новая организация</h1>
+      <p class="page__subtitle">Заполните данные государственной организации</p>
+    </header>
+
+    <form class="org-form" id="orgForm">
+      <div class="org-form__field">
+        <label class="org-form__label" for="name">Название организации</label>
+        <input class="org-form__input" type="text" id="name" placeholder="Например: Министерство внутренних дел" required>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label" for="shortName">Краткое название (аббревиатура)</label>
+        <input class="org-form__input" type="text" id="shortName" placeholder="Например: МВД" required>
+        <div class="org-form__hint">Отображается как заголовок карточки.</div>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label" for="description">Описание</label>
+        <textarea class="org-form__textarea" id="description" placeholder="Чем занимается организация, её функции и задачи" required></textarea>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label" for="head">Руководитель</label>
+        <input class="org-form__input" type="text" id="head" placeholder="Иванов Иван Иванович" required>
+        <div class="org-form__hint">ФИО руководителя организации.</div>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label" for="headRank">Звание руководителя</label>
+        <input class="org-form__input" type="text" id="headRank" placeholder="Генерал-лейтенант полиции" required>
+      </div>
+
+      <div class="org-form__field">
+        <label class="org-form__label" for="logo">Логотип / Эмблема</label>
+        <input class="org-form__file" type="file" id="logo" accept="image/*" required>
+        <img class="org-form__preview" id="preview" alt="Предпросмотр">
+      </div>
+
+      <button class="org-form__btn" type="submit" id="submitBtn">Добавить организацию</button>
+
+      <div class="org-form__progress" id="progress"><div class="org-form__progress-bar" id="progressBar"></div></div>
+      <div class="org-form__message" id="message"></div>
+    </form>
+  </main>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
+    const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
+    const form = document.getElementById('orgForm');
+    const logoInput = document.getElementById('logo');
+    const preview = document.getElementById('preview');
+    const submitBtn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
+
+    let currentUser = null;
+    let currentRole = 'citizen';
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      currentUser = user;
+      try {
+        const token = await user.getIdTokenResult();
+        currentRole = token.claims.role || 'citizen';
+      } catch (e) {}
+      if (currentRole !== 'government') {
+        showMessage('Только Правительство может добавлять организации.', 'error');
+        submitBtn.disabled = true;
+      }
+    });
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = 'org-form__message ' + (type === 'error' ? 'is-error' : 'is-success');
+    }
+
+    logoInput.addEventListener('change', () => {
+      const file = logoInput.files[0];
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      preview.classList.add('is-visible');
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) { showMessage('Вы не авторизованы.', 'error'); return; }
+      if (currentRole !== 'government') { showMessage('Недостаточно прав.', 'error'); return; }
+
+      const name = document.getElementById('name').value.trim();
+      const shortName = document.getElementById('shortName').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const head = document.getElementById('head').value.trim();
+      const headRank = document.getElementById('headRank').value.trim();
+      const file = logoInput.files[0];
+
+      if (!name || !shortName || !description || !head || !headRank || !file) {
+        showMessage('Заполните все поля.', 'error');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showMessage('Файл больше 10 МБ.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Загрузка...';
+      progress.classList.add('is-visible');
+      progressBar.style.width = '0%';
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload', { method: 'POST', body: formData });
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error((err.error && err.error.message) || 'Ошибка Cloudinary');
+        }
+        const data = await response.json();
+        const logoUrl = data.secure_url;
+        progressBar.style.width = '100%';
+
+        await addDoc(collection(db, 'organizations'), {
+          name: name,
+          shortName: shortName,
+          description: description,
+          head: head,
+          headRank: headRank,
+          logoUrl: logoUrl,
+          createdBy: currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+
+        showMessage('Готово! Перенаправление...', 'success');
+        setTimeout(() => { window.location.href = 'organizations.html'; }, 1200);
+
+      } catch (err) {
+        console.error(err);
+        showMessage('Ошибка: ' + err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Добавить организацию';
+        progress.classList.remove('is-visible');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Организации — Moscow RP</title>
+  <meta name="description" content="Государственные организации проекта Moscow RP.">
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .orgs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .org-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .org-card:hover { border-color: #c9a24a; box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
+    .org-card__logo {
+      width: 90px; height: 90px; border-radius: 16px; overflow: hidden;
+      margin: 0 0 18px; background: #f0f0f0;
+      border: 2px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .org-card__logo img { width: 100%; height: 100%; object-fit: contain; display: block; padding: 6px; }
+    .org-card__short { font-size: 22px; font-weight: 800; color: #111; margin: 0 0 4px; line-height: 1.2; letter-spacing: 0.02em; text-transform: uppercase; }
+    .org-card__name { font-size: 14px; color: #888; margin: 0 0 16px; line-height: 1.4; }
+    .org-card__desc { font-size: 14px; color: #444; line-height: 1.6; margin: 0 0 20px; flex: 1; }
+    .org-card__head {
+      border-top: 1px solid #eee;
+      padding-top: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .org-card__head-label { color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .org-card__head-name { color: #111; font-weight: 700; font-size: 14px; }
+    .org-card__head-rank { color: #666; font-style: italic; font-size: 12px; margin-top: 2px; }
+
+    .org-card__actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; }
+    .org-card__btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #fff; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      padding: 0; z-index: 2;
+    }
+    .org-card__btn.is-visible { display: inline-flex; }
+    .org-card__btn--edit { border: 1px solid #d4c187; color: #c9a24a; }
+    .org-card__btn--edit:hover { background: #c9a24a; color: #fff; }
+    .org-card__btn--delete { border: 1px solid #e0b5b3; color: #c9302c; }
+    .org-card__btn--delete:hover { background: #c9302c; color: #fff; }
+
+    .org-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+      overflow-y: auto;
+    }
+    .org-modal.is-open { display: flex; }
+    .org-modal__box {
+      background: #fff; border-radius: 16px;
+      max-width: 560px; width: 100%;
+      padding: 32px 28px;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+    }
+    .org-modal__close {
+      position: absolute; top: 14px; right: 14px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f4f4f4; border: none; color: #666;
+      cursor: pointer; font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .org-modal__close:hover { background: #e8e8e8; }
+    .org-modal__title { font-size: 20px; font-weight: 700; margin: 0 0 20px; }
+
+    .org-field { margin-bottom: 16px; }
+    .org-field__label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .org-field__input, .org-field__textarea { width: 100%; padding: 11px 14px; font-size: 15px; font-family: inherit; border: 1.5px solid #d8d8d8; border-radius: 8px; outline: none; box-sizing: border-box; background: #fff; color: #111; }
+    .org-field__input:focus, .org-field__textarea:focus { border-color: #c9a24a; }
+    .org-field__textarea { min-height: 80px; resize: vertical; }
+    .org-field__photo { display: flex; align-items: center; gap: 16px; }
+    .org-field__preview {
+      width: 80px; height: 80px; border-radius: 12px;
+      background: #eee; flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .org-field__preview img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+    .org-field__file { display: inline-block; padding: 9px 14px; background: #fff; border: 1.5px dashed #c9a24a; border-radius: 8px; font-size: 13px; color: #666; cursor: pointer; }
+    .org-field__file input { display: none; }
+    .org-field__file:hover { background: #fff8e6; }
+
+    .org-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .org-actions__btn { flex: 1; padding: 13px; font-size: 14px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
+    .org-actions__btn--save { background: #c9a24a; color: #fff; }
+    .org-actions__btn--save:hover { background: #b8903a; }
+    .org-actions__btn--save:disabled { opacity: .6; cursor: not-allowed; }
+    .org-actions__btn--cancel { background: #f4f4f4; color: #555; }
+    .org-actions__btn--cancel:hover { background: #e8e8e8; }
+
+    .org-message { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; }
+    .org-message.is-error { display: block; background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd; }
+    .org-message.is-success { display: block; background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf; }
+
+    @media (max-width: 640px) {
+      .orgs-grid { grid-template-columns: 1fr; gap: 16px; }
+      .org-card { padding: 22px 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link is-current">Организации</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+    <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:12px;z-index:20;">
+      <div id="authGuest" style="display:none;align-items:center;gap:8px;">
+        <a href="login.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#4a4a4a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <span>Войти</span>
+        </a>
+        <a href="register.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9302c;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+          <span>Регистрация</span>
+        </a>
+      </div>
+      <a id="authProfile" href="profile.html" style="display:none;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9a24a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span id="authProfileName">Профиль</span>
+        <span id="authProfileBadge" style="display:none;background:#fff;color:#c9a24a;font-size:10px;font-weight:800;letter-spacing:.02em;padding:3px 6px;border-radius:4px;">Правительство</span>
+      </a>
+      <a href="search.html" class="site-header__discord" title="Поиск" aria-label="Поиск">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </a>
+      <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title">Организации</h1>
+      <p class="page__subtitle">Государственные структуры проекта Moscow RP</p>
+    </header>
+
+    <div id="newOrgBlock" style="display:none;margin-bottom:28px;">
+      <a href="add-organization.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:#c9302c;color:#fff;border-radius:10px;font-weight:600;font-size:14px;text-decoration:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Добавить организацию
+      </a>
+    </div>
+
+    <div class="orgs-grid" id="orgsGrid"></div>
+  </main>
+
+  <div class="org-modal" id="editModal">
+    <div class="org-modal__box">
+      <button class="org-modal__close" type="button" id="modalClose" aria-label="Закрыть">×</button>
+      <h2 class="org-modal__title">Редактировать организацию</h2>
+
+      <form id="editForm">
+        <div class="org-field">
+          <label class="org-field__label">Логотип</label>
+          <div class="org-field__photo">
+            <div class="org-field__preview"><img src="" alt="" id="editLogoImg"></div>
+            <label class="org-field__file">
+              <input type="file" id="editLogo" accept="image/*">
+              Заменить логотип
+            </label>
+          </div>
+        </div>
+
+        <div class="org-field">
+          <label class="org-field__label" for="editName">Название</label>
+          <input class="org-field__input" type="text" id="editName" required>
+        </div>
+
+        <div class="org-field">
+          <label class="org-field__label" for="editShortName">Краткое название (аббревиатура)</label>
+          <input class="org-field__input" type="text" id="editShortName" required>
+        </div>
+
+        <div class="org-field">
+          <label class="org-field__label" for="editDescription">Описание</label>
+          <textarea class="org-field__textarea" id="editDescription" required></textarea>
+        </div>
+
+        <div class="org-field">
+          <label class="org-field__label" for="editHead">Руководитель</label>
+          <input class="org-field__input" type="text" id="editHead" required>
+        </div>
+
+        <div class="org-field">
+          <label class="org-field__label" for="editHeadRank">Звание руководителя</label>
+          <input class="org-field__input" type="text" id="editHeadRank" required>
+        </div>
+
+        <div class="org-actions">
+          <button type="button" class="org-actions__btn org-actions__btn--cancel" id="cancelBtn">Отмена</button>
+          <button type="submit" class="org-actions__btn org-actions__btn--save" id="saveBtn">Сохранить</button>
+        </div>
+
+        <div class="org-message" id="editMessage"></div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/auth-header.js?v=22"></script>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { collection, query, orderBy, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
+    const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
+    const gridEl = document.getElementById('orgsGrid');
+    const modal = document.getElementById('editModal');
+    const modalClose = document.getElementById('modalClose');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const editForm = document.getElementById('editForm');
+    const editLogoInput = document.getElementById('editLogo');
+    const editLogoImg = document.getElementById('editLogoImg');
+    const editMessage = document.getElementById('editMessage');
+    const saveBtn = document.getElementById('saveBtn');
+
+    let currentRole = 'citizen';
+    let currentEditId = null;
+    let currentLogoUrl = '';
+
+    loadOrganizations();
+
+    async function loadOrganizations() {
+      try {
+        const q = query(collection(db, 'organizations'), orderBy('createdAt', 'asc'));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          gridEl.innerHTML = '<p style="color:#888;grid-column:1/-1;text-align:center;padding:40px 0;">Пока нет добавленных организаций.</p>';
+          return;
+        }
+        const items = [];
+        snap.forEach((d) => items.push({ id: d.id, data: d.data() }));
+        gridEl.innerHTML = items.map(renderCard).join('');
+        updateCardBtns();
+      } catch (err) {
+        console.error(err);
+        gridEl.innerHTML = '<p style="color:#b3261e;grid-column:1/-1;text-align:center;">Ошибка загрузки. F12 → Console.</p>';
+      }
+    }
+
+    function renderCard(item) {
+      const d = item.data;
+      return `
+        <div class="org-card" data-doc-id="${item.id}">
+          <div class="org-card__actions">
+            <button class="org-card__btn org-card__btn--edit" type="button" data-id="${item.id}" title="Редактировать">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </button>
+            <button class="org-card__btn org-card__btn--delete" type="button" data-id="${item.id}" data-name="${esc(d.shortName)}" title="Удалить">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="org-card__logo">
+            <img src="${esc(d.logoUrl || '')}" alt="${esc(d.shortName)}" loading="lazy">
+          </div>
+          <h3 class="org-card__short">${esc(d.shortName || '')}</h3>
+          <p class="org-card__name">${esc(d.name || '')}</p>
+          <p class="org-card__desc">${esc(d.description || '')}</p>
+          <div class="org-card__head">
+            <div class="org-card__head-label">Руководитель</div>
+            <div class="org-card__head-name">${esc(d.head || '')}</div>
+            <div class="org-card__head-rank">${esc(d.headRank || '')}</div>
+          </div>
+        </div>`;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      const block = document.getElementById('newOrgBlock');
+      if (user) {
+        try {
+          const t = await user.getIdTokenResult();
+          currentRole = t.claims.role || 'citizen';
+        } catch (e) {}
+      }
+      if (block) block.style.display = (currentRole === 'government') ? 'block' : 'none';
+      updateCardBtns();
+    });
+
+    function updateCardBtns() {
+      const show = currentRole === 'government';
+
+      document.querySelectorAll('.org-card__btn--delete').forEach((btn) => {
+        btn.classList.toggle('is-visible', show);
+        btn.onclick = (e) => {
+          e.preventDefault();
+          const id = btn.getAttribute('data-id');
+          if (id) handleDelete(id, btn.getAttribute('data-name'));
+        };
+      });
+
+      document.querySelectorAll('.org-card__btn--edit').forEach((btn) => {
+        btn.classList.toggle('is-visible', show);
+        btn.onclick = (e) => {
+          e.preventDefault();
+          const id = btn.getAttribute('data-id');
+          const card = btn.closest('.org-card');
+          if (id && card) openEditModal(id, card);
+        };
+      });
+    }
+
+    function openEditModal(id, card) {
+      currentEditId = id;
+
+      const name = card.querySelector('.org-card__name').textContent;
+      const shortName = card.querySelector('.org-card__short').textContent;
+      const description = card.querySelector('.org-card__desc').textContent;
+      const head = card.querySelector('.org-card__head-name').textContent;
+      const headRank = card.querySelector('.org-card__head-rank').textContent;
+      const logoUrl = card.querySelector('.org-card__logo img').getAttribute('src');
+
+      document.getElementById('editName').value = name;
+      document.getElementById('editShortName').value = shortName;
+      document.getElementById('editDescription').value = description;
+      document.getElementById('editHead').value = head;
+      document.getElementById('editHeadRank').value = headRank;
+      editLogoImg.src = logoUrl;
+      currentLogoUrl = logoUrl;
+
+      editMessage.className = 'org-message';
+      editMessage.textContent = '';
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Сохранить';
+
+      modal.classList.add('is-open');
+    }
+
+    function closeEditModal() {
+      modal.classList.remove('is-open');
+      currentEditId = null;
+      currentLogoUrl = '';
+      editLogoInput.value = '';
+    }
+
+    modalClose.addEventListener('click', closeEditModal);
+    cancelBtn.addEventListener('click', closeEditModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeEditModal(); });
+
+    editLogoInput.addEventListener('change', () => {
+      const file = editLogoInput.files[0];
+      if (!file) return;
+      editLogoImg.src = URL.createObjectURL(file);
+    });
+
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentEditId) return;
+      if (currentRole !== 'government') {
+        showEditMessage('Недостаточно прав.', 'error');
+        return;
+      }
+
+      const name = document.getElementById('editName').value.trim();
+      const shortName = document.getElementById('editShortName').value.trim();
+      const description = document.getElementById('editDescription').value.trim();
+      const head = document.getElementById('editHead').value.trim();
+      const headRank = document.getElementById('editHeadRank').value.trim();
+      const file = editLogoInput.files[0];
+
+      if (!name || !shortName || !description || !head || !headRank) {
+        showEditMessage('Заполните все поля.', 'error');
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Сохранение...';
+
+      try {
+        let logoUrl = currentLogoUrl;
+
+        if (file) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+          const response = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload', { method: 'POST', body: formData });
+          if (!response.ok) {
+            const err = await response.json();
+            throw new Error((err.error && err.error.message) || 'Ошибка Cloudinary');
+          }
+          const data = await response.json();
+          logoUrl = data.secure_url;
+        }
+
+        await updateDoc(doc(db, 'organizations', currentEditId), {
+          name: name,
+          shortName: shortName,
+          description: description,
+          head: head,
+          headRank: headRank,
+          logoUrl: logoUrl
+        });
+
+        showEditMessage('Сохранено!', 'success');
+        setTimeout(() => { closeEditModal(); loadOrganizations(); }, 700);
+
+      } catch (err) {
+        console.error(err);
+        showEditMessage('Ошибка: ' + err.message, 'error');
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Сохранить';
+      }
+    });
+
+    function showEditMessage(text, type) {
+      editMessage.textContent = text;
+      editMessage.className = 'org-message ' + (type === 'error' ? 'is-error' : 'is-success');
+    }
+
+    async function handleDelete(docId, name) {
+      if (!confirm('Удалить организацию?\n\n«' + name + '»\n\nДействие необратимо.')) return;
+      try {
+        await deleteDoc(doc(db, 'organizations', docId));
+        document.querySelector('.org-card[data-doc-id="' + docId + '"]')?.remove();
+        if (!gridEl.querySelector('.org-card')) {
+          gridEl.innerHTML = '<p style="color:#888;grid-column:1/-1;text-align:center;padding:40px 0;">Пока нет добавленных организаций.</p>';
+        }
+      } catch (err) { alert('Ошибка: ' + err.message); }
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+  </script>
+</body>
+</html>
