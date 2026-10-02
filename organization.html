@@ -58,12 +58,21 @@
     .org-pub { padding: 22px 0; border-bottom: 1px solid #eee; position: relative; }
     .org-pub:first-child { padding-top: 0; }
     .org-pub:last-child { border-bottom: none; padding-bottom: 0; }
-    .org-pub__link { display: block; color: inherit; text-decoration: none; transition: opacity .15s ease; }
+    .org-pub__link { display: block; color: inherit; text-decoration: none; transition: opacity .15s ease; padding-right: 44px; }
     .org-pub__link:hover { opacity: 0.75; }
     .org-pub__title { font-size: 20px; font-weight: 700; color: #111; margin: 0 0 8px; line-height: 1.3; }
     .org-pub__date { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #666; margin: 0 0 8px; }
     .org-pub__date svg { color: #c9a24a; flex-shrink: 0; }
     .org-pub__desc { font-size: 15px; color: #333; margin: 0; line-height: 1.6; }
+    .org-pub__delete {
+      position: absolute; top: 22px; right: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #fff; border: 1px solid #e0b5b3; color: #c9302c;
+      cursor: pointer; display: none; align-items: center; justify-content: center;
+      padding: 0; z-index: 2;
+    }
+    .org-pub__delete.is-visible { display: inline-flex; }
+    .org-pub__delete:hover { background: #c9302c; color: #fff; }
 
     .org-toolbar {
       display: flex; justify-content: space-between; align-items: center;
@@ -137,12 +146,12 @@
     </div>
   </main>
 
-  <script type="module" src="js/auth-header.js?v=22"></script>
+  <script type="module" src="js/auth-header.js?v=23"></script>
 
   <script type="module">
     import { auth, db } from "./js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { doc, getDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { canEdit, getClaims } from "./js/permissions.js";
 
     const params = new URLSearchParams(window.location.search);
@@ -151,6 +160,7 @@
     const orgPageEl = document.getElementById('orgPage');
     const newPubLink = document.getElementById('newPubLink');
 
+    let currentUser = null;
     let currentClaims = { role: 'citizen', sections: [] };
     let currentTab = null;
     let TABS = [];
@@ -178,6 +188,7 @@
         }
         const d = snap.data();
 
+        // Ключевое: сохраняем "короткий" section организации (mvd / fsb / government / ...)
         CURRENT_ORG_SECTION = d.section || '';
 
         const rawTabs = Array.isArray(d.tabs) && d.tabs.length ? d.tabs : DEFAULT_TABS;
@@ -238,19 +249,23 @@
       updateNewPubLink();
     }
 
+    // ============================================================
+    // Проверка: может ли текущий пользователь управлять ЭТОЙ ОРГАНИЗАЦИЕЙ
+    // (не вкладкой конкретной, а всей организацией)
+    // ============================================================
+    function canManageThisOrg() {
+      if (!CURRENT_ORG_SECTION) return false;
+      return canEdit(CURRENT_ORG_SECTION, currentClaims);
+    }
+
     function updateNewPubLink() {
       if (!newPubLink) return;
-      const tab = TABS.find(t => t.key === currentTab);
-      if (!tab) {
-        newPubLink.style.display = 'none';
-        return;
-      }
-
-      const allowed = (CURRENT_ORG_SECTION && canEdit(CURRENT_ORG_SECTION, currentClaims))
-                   || canEdit(tab.section, currentClaims);
-
+      const allowed = canManageThisOrg();
       newPubLink.style.display = allowed ? 'inline-flex' : 'none';
-      if (allowed) newPubLink.href = 'add-publication.html?section=' + tab.section;
+      if (allowed) {
+        const tab = TABS.find(t => t.key === currentTab);
+        if (tab) newPubLink.href = 'add-publication.html?section=' + tab.section;
+      }
     }
 
     async function loadTab(tabKey) {
@@ -269,17 +284,32 @@
         const items = [];
         snap.forEach(d => items.push({ id: d.id, data: d.data() }));
         items.sort((a, b) => (b.data.createdAt?.toMillis?.() || 0) - (a.data.createdAt?.toMillis?.() || 0));
-        panel.innerHTML = '<ul class="org-panel__list">' + items.map(renderPub).join('') + '</ul>';
+
+        const canDelete = canManageThisOrg();
+
+        panel.innerHTML = '<ul class="org-panel__list">' + items.map(item => renderPub(item, canDelete)).join('') + '</ul>';
+
+        panel.querySelectorAll('.org-pub__delete').forEach(btn => {
+          btn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDelete(btn.getAttribute('data-id'), btn.getAttribute('data-title'));
+          };
+        });
       } catch (e) {
         console.error(e);
         panel.innerHTML = '<p class="org-panel__empty" style="color:#b3261e;">Ошибка загрузки.</p>';
       }
     }
 
-    function renderPub(item) {
+    function renderPub(item, canDelete) {
       const d = item.data;
       return `
-        <li class="org-pub">
+        <li class="org-pub" data-doc-id="${item.id}">
+          <button class="org-pub__delete${canDelete ? ' is-visible' : ''}" type="button"
+                  data-id="${item.id}" data-title="${esc(d.title)}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
           <a class="org-pub__link" href="publication.html?id=${item.id}">
             <h2 class="org-pub__title">${esc(d.title || 'Без названия')}</h2>
             <p class="org-pub__date">
@@ -291,17 +321,29 @@
         </li>`;
     }
 
+    async function handleDelete(docId, title) {
+      if (!confirm('Удалить публикацию?\n\n«' + title + '»\n\nДействие необратимо.')) return;
+      try {
+        await deleteDoc(doc(db, 'publications', docId));
+        document.querySelector('.org-pub[data-doc-id="' + docId + '"]')?.remove();
+      } catch (err) {
+        alert('Ошибка: ' + err.message);
+      }
+    }
+
     function formatDate(ts) {
       if (!ts) return '';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
       const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
       return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear() + ' года';
     }
+
     function esc(s) {
       return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
 
     onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
       currentClaims = await getClaims(user);
       updateNewPubLink();
     });
