@@ -130,7 +130,8 @@
   <script type="module">
     import { auth, db } from "./js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { canEdit, getClaims } from "./js/permissions.js";
 
     const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
     const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
@@ -176,7 +177,8 @@
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progressBar');
 
-    // При выборе «другое» — показываем поле для ручного ввода
+    const params = new URLSearchParams(window.location.search);
+
     authorSelect.addEventListener('change', () => {
       if (authorSelect.value === '__custom__') {
         customAuthorField.style.display = 'block';
@@ -188,32 +190,44 @@
       }
     });
 
-    // Подставляем раздел из URL
-    const params = new URLSearchParams(window.location.search);
     const presetSection = params.get('section');
-    if (presetSection && SECTION_TO_PAGE[presetSection]) {
-      sectionSelect.value = presetSection;
-    } else if (presetSection) {
-      const opt = document.createElement('option');
-      opt.value = presetSection;
-      opt.textContent = 'Раздел организации: ' + presetSection;
-      sectionSelect.appendChild(opt);
-      sectionSelect.value = presetSection;
-    }
 
     let currentUser = null;
-    let currentRole = 'citizen';
+    let currentClaims = { role: 'citizen', sections: [] };
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
       currentUser = user;
-      try {
-        const token = await user.getIdTokenResult();
-        currentRole = token.claims.role || 'citizen';
-      } catch (e) {}
-      if (currentRole !== 'government' && currentRole !== 'editor') {
+      currentClaims = await getClaims(user);
+
+      const allowedAll = currentClaims.role === 'admin' || currentClaims.sections.includes('*');
+      if (!allowedAll) {
+        Array.from(sectionSelect.options).forEach((opt) => {
+          if (!opt.value) return;
+          if (!canEdit(opt.value, currentClaims)) {
+            opt.remove();
+          }
+        });
+      }
+
+      if (sectionSelect.options.length <= 1) {
         showMessage('У вас нет прав на публикацию. Обратитесь к администрации.', 'error');
         submitBtn.disabled = true;
+        return;
+      }
+
+      // Подставляем section из URL, если он доступен
+      if (presetSection) {
+        const opt = Array.from(sectionSelect.options).find(o => o.value === presetSection);
+        if (opt) {
+          sectionSelect.value = presetSection;
+        } else if (canEdit(presetSection, currentClaims)) {
+          const newOpt = document.createElement('option');
+          newOpt.value = presetSection;
+          newOpt.textContent = 'Раздел организации: ' + presetSection;
+          sectionSelect.appendChild(newOpt);
+          sectionSelect.value = presetSection;
+        }
       }
     });
 
@@ -245,6 +259,10 @@
         showMessage('Заполните все поля.', 'error');
         return;
       }
+      if (!canEdit(section, currentClaims)) {
+        showMessage('У вас нет прав на публикацию в этот раздел.', 'error');
+        return;
+      }
       if (file.size > 10 * 1024 * 1024) {
         showMessage('Файл больше 10 МБ.', 'error');
         return;
@@ -274,16 +292,29 @@
         const imageUrl = data.secure_url;
         progressBar.style.width = '100%';
 
+        // Определяем orgSection, если публикация идёт в раздел организации
+        let orgSection = '';
+        const m = section.match(/^org-([a-zA-Z0-9]+)-(.+)$/);
+        if (m) {
+          try {
+            const orgSnap = await getDoc(doc(db, 'organizations', m[1]));
+            if (orgSnap.exists()) {
+              orgSection = orgSnap.data().section || '';
+            }
+          } catch (e) { console.warn('Не удалось получить orgSection', e); }
+        }
+
         await addDoc(collection(db, 'publications'), {
           title: title,
           subtitle: subtitle,
           imageUrl: imageUrl,
           section: section,
+          orgSection: orgSection,
           author: authorValue,
-          authorName: currentUser.displayName || currentUser.email.split('@')[0],
+          authorName: currentUser.displayName || (currentUser.email || '').split('@')[0],
           authorEmail: currentUser.email,
           authorUid: currentUser.uid,
-          authorRole: currentRole,
+          authorRole: currentClaims.role,
           createdAt: serverTimestamp()
         });
 

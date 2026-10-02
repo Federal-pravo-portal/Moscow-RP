@@ -143,6 +143,7 @@
     import { auth, db } from "./js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { canEdit, getClaims } from "./js/permissions.js";
 
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get('id');
@@ -150,9 +151,10 @@
     const orgPageEl = document.getElementById('orgPage');
     const newPubLink = document.getElementById('newPubLink');
 
-    let currentRole = 'citizen';
+    let currentClaims = { role: 'citizen', sections: [] };
     let currentTab = null;
     let TABS = [];
+    let CURRENT_ORG_SECTION = '';
 
     const DEFAULT_TABS = [
       { label: 'Пресс-служба',     section: 'press' },
@@ -175,6 +177,9 @@
           return;
         }
         const d = snap.data();
+
+        // Запоминаем короткий раздел организации — по нему будем проверять права
+        CURRENT_ORG_SECTION = d.section || '';
 
         const rawTabs = Array.isArray(d.tabs) && d.tabs.length ? d.tabs : DEFAULT_TABS;
         TABS = rawTabs.map(t => ({
@@ -230,12 +235,26 @@
         loadTab(tab);
         updateNewPubLink();
       });
+
+      updateNewPubLink();
     }
 
     function updateNewPubLink() {
       if (!newPubLink) return;
       const tab = TABS.find(t => t.key === currentTab);
-      if (tab) newPubLink.href = 'add-publication.html?section=' + tab.section;
+      if (!tab) {
+        newPubLink.style.display = 'none';
+        return;
+      }
+
+      // Разрешаем публиковать, если:
+      //   1) у пользователя есть права на раздел организации (org.section) — например, mvd → mvd
+      //   2) ИЛИ на конкретную вкладку (org-{id}-{tab})
+      const allowed = (CURRENT_ORG_SECTION && canEdit(CURRENT_ORG_SECTION, currentClaims))
+                   || canEdit(tab.section, currentClaims);
+
+      newPubLink.style.display = allowed ? 'inline-flex' : 'none';
+      if (allowed) newPubLink.href = 'add-publication.html?section=' + tab.section;
     }
 
     async function loadTab(tabKey) {
@@ -287,16 +306,8 @@
     }
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const t = await user.getIdTokenResult();
-          currentRole = t.claims.role || 'citizen';
-        } catch (e) {}
-      }
-      if (newPubLink) {
-        newPubLink.style.display = (currentRole === 'government' || currentRole === 'editor') ? 'inline-flex' : 'none';
-        updateNewPubLink();
-      }
+      currentClaims = await getClaims(user);
+      updateNewPubLink();
     });
   </script>
 </body>

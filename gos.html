@@ -112,7 +112,7 @@
 </head>
 <body>
 
-    <header class="site-header">
+  <header class="site-header">
     <nav class="site-header__menu">
       <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
       <a href="gos.html" class="site-header__link">Государственное руководство</a>
@@ -216,6 +216,7 @@
     import { auth, db } from "./js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, query, orderBy, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { canManageOfficials, getClaims, toggleEl } from "./js/permissions.js";
 
     const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
     const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
@@ -230,7 +231,7 @@
     const editMessage = document.getElementById('editMessage');
     const saveBtn = document.getElementById('saveBtn');
 
-    let currentRole = 'citizen';
+    let currentClaims = { role: 'citizen', sections: [] };
     let currentEditId = null;
     let currentPhotoUrl = '';
 
@@ -284,19 +285,13 @@
     }
 
     onAuthStateChanged(auth, async (user) => {
-      const block = document.getElementById('newOfficialBlock');
-      if (user) {
-        try {
-          const t = await user.getIdTokenResult();
-          currentRole = t.claims.role || 'citizen';
-        } catch (e) {}
-      }
-      if (block) block.style.display = (currentRole === 'government') ? 'block' : 'none';
+      currentClaims = await getClaims(user);
+      toggleEl(document.getElementById('newOfficialBlock'), canManageOfficials(currentClaims), 'block');
       updateCardBtns();
     });
 
     function updateCardBtns() {
-      const show = currentRole === 'government';
+      const show = canManageOfficials(currentClaims);
 
       document.querySelectorAll('.official-card__btn--delete').forEach((btn) => {
         btn.classList.toggle('is-visible', show);
@@ -365,7 +360,7 @@
     editForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentEditId) return;
-      if (currentRole !== 'government') {
+      if (!canManageOfficials(currentClaims)) {
         showEditMessage('Недостаточно прав.', 'error');
         return;
       }
