@@ -49,12 +49,42 @@ export function canEdit(section, claims) {
 }
 
 /**
- * Может ли пользователь управлять карточками руководства и организаций.
+ * Может ли пользователь управлять карточками руководства.
  * Только admin и government.
  */
 export function canManageOfficials(claims) {
   if (!claims) return false;
   return claims.role === "admin" || claims.role === "government";
+}
+
+/**
+ * Может ли пользователь редактировать карточку организации (карандаш/крестик).
+ * @param {string} orgSection — значение поля `section` организации из Firestore
+ * @param {{role:string, sections:string[]}} claims
+ * @param {boolean} strictMode — true: government видит только свою карточку. false: government видит все.
+ */
+export function canEditOrgCard(orgSection, claims, strictMode = false) {
+  if (!claims) return false;
+  const role = claims.role || "citizen";
+  const sections = claims.sections || [];
+
+  // Админ — всегда всё
+  if (role === "admin") return true;
+
+  // Правительство
+  if (role === "government") {
+    if (strictMode) {
+      // Строгий режим — только своя карточка
+      return orgSection === "government";
+    }
+    // Мягкий режим — все карточки
+    return true;
+  }
+
+  // Остальные роли — только своя карточка
+  if (!orgSection) return false;
+  if (sections.includes("*")) return true;
+  return sections.includes(orgSection);
 }
 
 export function canDeleteAny(claims) {

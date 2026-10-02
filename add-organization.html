@@ -62,6 +62,30 @@
       </div>
 
       <div class="org-form__field">
+        <label class="org-form__label" for="section">Раздел (какая структура управляет)</label>
+        <select class="org-form__input" id="section" required>
+          <option value="">— выберите раздел —</option>
+          <option value="government">Правительство РФ</option>
+          <option value="ap">Администрация Президента РФ</option>
+          <option value="mvd">МВД РФ</option>
+          <option value="fsb">ФСБ РФ</option>
+          <option value="prokuratura">Прокуратура РФ</option>
+          <option value="minoborony">Министерство обороны РФ</option>
+          <option value="minzdrav">Министерство здравоохранения РФ</option>
+          <option value="minust">Министерство юстиции РФ</option>
+          <option value="mchs">МЧС России</option>
+          <option value="cik">ЦИК РФ</option>
+          <option value="sb">Совет Безопасности РФ</option>
+          <option value="sk">Следственный комитет РФ</option>
+          <option value="fs">Совет Федерации РФ</option>
+          <option value="fsin">ФСИН РФ</option>
+          <option value="regiony">Региональные администрации</option>
+          <option value="sudy">Суды РФ</option>
+        </select>
+        <div class="org-form__hint">Определяет, какая роль сможет редактировать эту организацию.</div>
+      </div>
+
+      <div class="org-form__field">
         <label class="org-form__label" for="description">Описание</label>
         <textarea class="org-form__textarea" id="description" placeholder="Чем занимается организация, её функции и задачи" required></textarea>
       </div>
@@ -145,13 +169,14 @@
 
       const name = document.getElementById('name').value.trim();
       const shortName = document.getElementById('shortName').value.trim();
+      const section = document.getElementById('section').value;
       const description = document.getElementById('description').value.trim();
       const headPosition = document.getElementById('headPosition').value.trim();
       const head = document.getElementById('head').value.trim();
       const headRank = document.getElementById('headRank').value.trim();
       const file = logoInput.files[0];
 
-      if (!name || !shortName || !description || !headPosition || !head || !headRank || !file) {
+      if (!name || !shortName || !section || !description || !headPosition || !head || !headRank || !file) {
         showMessage('Заполните все поля.', 'error');
         return;
       }
@@ -182,6 +207,7 @@
         await addDoc(collection(db, 'organizations'), {
           name: name,
           shortName: shortName,
+          section: section,
           description: description,
           headPosition: headPosition,
           head: head,

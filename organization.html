@@ -178,7 +178,6 @@
         }
         const d = snap.data();
 
-        // Запоминаем короткий раздел организации — по нему будем проверять права
         CURRENT_ORG_SECTION = d.section || '';
 
         const rawTabs = Array.isArray(d.tabs) && d.tabs.length ? d.tabs : DEFAULT_TABS;
@@ -247,9 +246,6 @@
         return;
       }
 
-      // Разрешаем публиковать, если:
-      //   1) у пользователя есть права на раздел организации (org.section) — например, mvd → mvd
-      //   2) ИЛИ на конкретную вкладку (org-{id}-{tab})
       const allowed = (CURRENT_ORG_SECTION && canEdit(CURRENT_ORG_SECTION, currentClaims))
                    || canEdit(tab.section, currentClaims);
 
