@@ -109,9 +109,26 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    .profile-card__role--citizen { background: #777; }
-    .profile-card__role--government { background: #c9a24a; }
-    .profile-card__role--editor { background: #c9a24a; }
+    /* Цвета ролей */
+    .profile-card__role--citizen     { background: #777; }
+    .profile-card__role--admin       { background: #c9302c; }
+    .profile-card__role--government  { background: #c9a24a; }
+    .profile-card__role--ap          { background: #c9a24a; }
+    .profile-card__role--mvd         { background: #1a3a5c; }
+    .profile-card__role--fsb         { background: #2f4f4f; }
+    .profile-card__role--prokuratura { background: #3a5c1a; }
+    .profile-card__role--sk          { background: #4a1a5c; }
+    .profile-card__role--minoborony  { background: #5c3a1a; }
+    .profile-card__role--minzdrav    { background: #1a5c4a; }
+    .profile-card__role--minust      { background: #3a3a5c; }
+    .profile-card__role--mchs        { background: #c9302c; }
+    .profile-card__role--cik         { background: #5c1a3a; }
+    .profile-card__role--sb          { background: #2f4f4f; }
+    .profile-card__role--fs          { background: #c9a24a; }
+    .profile-card__role--fsin        { background: #3a3a3a; }
+    .profile-card__role--regiony     { background: #3a3a3a; }
+    .profile-card__role--sudy        { background: #4a4a4a; }
+    .profile-card__role--editor      { background: #c9a24a; }
 
     .profile-card__actions {
       display: flex; gap: 12px; flex-wrap: wrap;
@@ -217,7 +234,7 @@
     </div>
   </main>
 
-  <script type="module" src="js/auth-header.js?v=22"></script>
+  <script type="module" src="js/auth-header.js?v=23"></script>
 
   <script type="module">
     import { auth, db } from "./js/firebase-config.js";
@@ -226,6 +243,31 @@
 
     const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
     const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
+    // ============================================================
+    // КАРТА РОЛЕЙ
+    // ============================================================
+    const ROLE_LABELS = {
+      "admin":       "Администратор",
+      "government":  "Правительство РФ",
+      "ap":          "Администрация Президента",
+      "mvd":         "МВД РФ",
+      "fsb":         "ФСБ РФ",
+      "fsin":        "ФСИН РФ",
+      "prokuratura": "Прокуратура РФ",
+      "sk":          "Следственный комитет",
+      "minoborony":  "Министерство обороны",
+      "minzdrav":    "Министерство здравоохранения",
+      "minust":      "Министерство юстиции",
+      "mchs":        "МЧС России",
+      "cik":         "ЦИК РФ",
+      "sb":          "Совет Безопасности",
+      "fs":          "Совет Федерации",
+      "regiony":     "Региональные администрации",
+      "sudy":        "Суды РФ",
+      "editor":      "Редактор",
+      "citizen":     "Гражданин РФ"
+    };
 
     const REGIONS = [
       "Москва",
@@ -290,17 +332,9 @@
 
       currentPhotoUrl = photoUrl;
 
-      const roleLabel = {
-        'government': 'Правительство',
-        'editor':     'Администратор',
-        'citizen':    'Гражданин РФ'
-      }[currentRole] || 'Гражданин РФ';
-
-      const roleClass = {
-        'government': 'profile-card__role--government',
-        'editor':     'profile-card__role--editor',
-        'citizen':    'profile-card__role--citizen'
-      }[currentRole] || 'profile-card__role--citizen';
+      // Роль — берём из карты, если нет — citizen
+      const roleLabel = ROLE_LABELS[currentRole] || ROLE_LABELS["citizen"];
+      const roleClass = 'profile-card__role--' + (ROLE_LABELS[currentRole] ? currentRole : 'citizen');
 
       card.innerHTML = `
         <form id="profileForm">
@@ -326,7 +360,7 @@
             <label class="profile-card__label" for="email">Почта</label>
             <input class="profile-card__input" type="email" id="email"
                    value="${escapeHtml(email)}" disabled>
-            <div class="profile-card__hint" style="font-size:12px;color:#999;margin-top:6px;">
+            <div style="font-size:12px;color:#999;margin-top:6px;">
               Почта привязана к аккаунту и не может быть изменена.
             </div>
           </div>
