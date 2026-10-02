@@ -705,6 +705,22 @@ img {
   background: #ffffff;
   border-radius: 2px;
 }
+/* Аватар игрока в кнопке профиля */
+#authProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+#authProfile .auth-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+  background: #f0f0f0;
+  border: 1.5px solid #fff;
+  flex-shrink: 0;
+}
 
 /* Кликабельный заголовок в шапке */
 .site-header__title {

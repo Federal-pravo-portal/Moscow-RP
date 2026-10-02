@@ -6,6 +6,23 @@ const authProfile = document.getElementById("authProfile");
 const authProfileName = document.getElementById("authProfileName");
 const authProfileBadge = document.getElementById("authProfileBadge");
 
+// Ищем или создаём контейнер для аватара внутри кнопки профиля
+function ensureAvatarEl() {
+  if (!authProfile) return null;
+  let img = authProfile.querySelector('.auth-avatar');
+  if (!img) {
+    img = document.createElement('img');
+    img.className = 'auth-avatar';
+    img.alt = '';
+    img.style.display = 'none';
+    // Вставляем перед основной SVG-иконкой
+    const svg = authProfile.querySelector('svg');
+    if (svg) authProfile.insertBefore(img, svg);
+    else authProfile.prepend(img);
+  }
+  return img;
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     if (authGuest) authGuest.style.display = "inline-flex";
@@ -20,6 +37,22 @@ onAuthStateChanged(auth, async (user) => {
     authProfileName.textContent = user.displayName || user.email || "Профиль";
   }
 
+  // 🖼 Аватар
+  const avatarImg = ensureAvatarEl();
+  const defaultSvg = authProfile.querySelector('svg');
+
+  if (avatarImg) {
+    if (user.photoURL) {
+      avatarImg.src = user.photoURL;
+      avatarImg.style.display = 'inline-block';
+      if (defaultSvg) defaultSvg.style.display = 'none';
+    } else {
+      avatarImg.style.display = 'none';
+      if (defaultSvg) defaultSvg.style.display = '';
+    }
+  }
+
+  // 🏷 Бейдж роли
   try {
     const token = await user.getIdTokenResult();
     const role = token.claims.role || "citizen";
@@ -55,7 +88,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Кнопка «Выйти» — обрабатывается по id="logoutBtn"
+// Кнопка «Выйти»
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("#logoutBtn");
   if (!btn) return;
