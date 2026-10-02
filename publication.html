@@ -8,152 +8,6 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
-  <style>
-    .pub-layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 32px;
-      align-items: start;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    /* Левая колонка — карточка автора */
-    .author-card {
-      background: #1f1f1f;
-      border-radius: 16px;
-      padding: 28px 20px 24px;
-      text-align: center;
-      color: #fff;
-      position: sticky;
-      top: 90px;
-    }
-    .author-card__avatar {
-      width: 130px; height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 0 auto 16px;
-      background: #2c2c2c;
-      border: 3px solid #ffffff10;
-      display: flex; align-items: center; justify-content: center;
-      color: #888;
-      position: relative;
-    }
-    .author-card__avatar img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .author-card__avatar svg { width: 56px; height: 56px; }
-
-    /* Кружок-онлайн справа снизу от аватара */
-    .author-card__avatar::after {
-      content: "";
-      position: absolute;
-      right: 6px; bottom: 6px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: #1f1f1f;
-      box-shadow: 0 0 0 3px #1f1f1f;
-    }
-    .author-card__status-dot {
-      position: absolute;
-      right: 10px; bottom: 10px;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: #2ecc71;
-      box-shadow: 0 0 0 3px #1f1f1f;
-      z-index: 2;
-    }
-
-    .author-card__name {
-      font-size: 20px;
-      font-weight: 800;
-      color: #2ecc71;
-      margin: 0 0 8px;
-      letter-spacing: 0.02em;
-      line-height: 1.25;
-    }
-
-    .author-card__rank-line {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #e8e8e8;
-      margin: 0 0 18px;
-    }
-    .author-card__dots {
-      display: inline-flex; gap: 3px; color: #4a4a4a; font-size: 14px;
-    }
-    .author-card__dots i {
-      display: inline-block;
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #4a4a4a;
-    }
-
-    .author-card__btn {
-      display: block;
-      width: 100%;
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 8px;
-      letter-spacing: 0.02em;
-      text-decoration: none;
-      color: #fff;
-    }
-    .author-card__btn--forum  { background: #f2a03c; } /* Команда форума */
-    .author-card__btn--admin  { background: #2ecc71; } /* Гл. Админ */
-    .author-card__btn--gov    { background: #c9a24a; } /* Правительство */
-    .author-card__btn--editor { background: #9c7b3a; } /* Администратор */
-    .author-card__btn--citizen{ background: #555; }    /* Гражданин РФ */
-
-    /* Правая колонка — сам документ */
-    .pub-doc { max-width: 900px; }
-    .pub-doc__head { margin-bottom: 20px; }
-    .pub-doc__title { font-size: 22px; font-weight: 700; color: #111; margin: 0 0 10px; line-height: 1.35; }
-    .pub-doc__subtitle { font-size: 16px; color: #444; margin: 0 0 14px; line-height: 1.5; }
-    .pub-doc__meta {
-      display: flex; flex-wrap: wrap; gap: 16px;
-      font-size: 14px; color: #777;
-      padding: 10px 0 16px;
-      border-bottom: 1px solid #e8e8e8;
-      margin-bottom: 20px;
-    }
-    .pub-doc__meta-item { display: inline-flex; align-items: center; gap: 6px; }
-    .pub-doc__meta svg { color: #c9a24a; }
-    .pub-doc__image {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      border-radius: 4px;
-      border: 1px solid #e8e8e8;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-    }
-    .pub-doc__back {
-      display: inline-block;
-      margin-top: 28px;
-      font-size: 15px;
-      color: #666;
-      text-decoration: none;
-    }
-    .pub-doc__back:hover { opacity: 0.7; }
-
-    @media (max-width: 960px) {
-      .pub-layout {
-        grid-template-columns: 1fr;
-      }
-      .author-card {
-        position: static;
-        max-width: 320px;
-        margin: 0 auto;
-      }
-    }
-  </style>
 </head>
 <body>
 
@@ -190,9 +44,42 @@
     </div>
   </header>
 
-  <main class="page" id="pageMain">
-    <p style="text-align:center;color:#888;padding:60px 0;">Загрузка публикации…</p>
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title" id="pubTitle">Загрузка…</h1>
+      <p class="page__subtitle" id="pubSubtitle"></p>
+    </header>
+
+    <p style="text-align:center;color:#777;font-size:14px;margin-bottom:24px;" id="pubMeta"></p>
+
+    <div class="post-image-wrap">
+      <img src="" alt="" class="post-image" id="pubImage">
+    </div>
+
+    <a href="javascript:history.back()" class="post-back">← Назад</a>
   </main>
+
+  <style>
+    .post-image-wrap {
+      margin: 32px 0 0;
+      text-align: center;
+    }
+    .post-image {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      border-radius: 4px;
+    }
+    .post-back {
+      display: inline-block;
+      margin-top: 28px;
+      font-size: 15px;
+      color: #666;
+      text-decoration: none;
+    }
+    .post-back:hover { opacity: 0.7; }
+  </style>
 
   <script type="module" src="js/auth-header.js?v=22"></script>
 
@@ -202,113 +89,36 @@
 
     const params = new URLSearchParams(window.location.search);
     const pubId = params.get('id');
-    const pageMain = document.getElementById('pageMain');
+
+    const titleEl = document.getElementById('pubTitle');
+    const subtitleEl = document.getElementById('pubSubtitle');
+    const metaEl = document.getElementById('pubMeta');
+    const imageEl = document.getElementById('pubImage');
 
     if (!pubId) {
-      pageMain.innerHTML = '<p style="text-align:center;color:#b3261e;padding:60px 0;">Публикация не найдена.</p>';
+      titleEl.textContent = 'Публикация не найдена';
     } else {
       loadPublication();
     }
 
     async function loadPublication() {
       try {
-        const pubSnap = await getDoc(doc(db, 'publications', pubId));
-        if (!pubSnap.exists()) {
-          pageMain.innerHTML = '<p style="text-align:center;color:#b3261e;padding:60px 0;">Публикация не найдена.</p>';
+        const snap = await getDoc(doc(db, 'publications', pubId));
+        if (!snap.exists()) {
+          titleEl.textContent = 'Публикация не найдена';
           return;
         }
-        const pub = pubSnap.data();
+        const pub = snap.data();
 
-        // Загружаем данные автора
-        let author = {
-          nickname: pub.author || 'Неизвестный',
-          photoUrl: '',
-          role: pub.authorRole || 'citizen',
-          rank: '',
-          region: ''
-        };
-
-        if (pub.authorUid) {
-          try {
-            const userSnap = await getDoc(doc(db, 'users', pub.authorUid));
-            if (userSnap.exists()) {
-              const u = userSnap.data();
-              author.nickname = u.nickname || author.nickname;
-              author.photoUrl = u.photoUrl || '';
-              author.rank = u.rank || '';
-              author.region = u.region || '';
-              if (u.role) author.role = u.role;
-            }
-          } catch (e) {
-            console.warn('Не удалось загрузить автора:', e);
-          }
-        }
-
-        renderPublication(pub, author);
+        titleEl.textContent = pub.title || 'Без названия';
+        subtitleEl.textContent = pub.subtitle || '';
+        metaEl.textContent = formatDate(pub.createdAt) + (pub.author ? ' · ' + pub.author : '');
+        imageEl.src = pub.imageUrl || '';
+        imageEl.alt = pub.title || '';
       } catch (e) {
         console.error(e);
-        pageMain.innerHTML = '<p style="text-align:center;color:#b3261e;padding:60px 0;">Ошибка загрузки.</p>';
+        titleEl.textContent = 'Ошибка загрузки';
       }
-    }
-
-    function renderPublication(pub, author) {
-      const roleLabel = {
-        'government': 'Правительство',
-        'editor':     'Администратор',
-        'citizen':    'Гражданин РФ'
-      }[author.role] || 'Гражданин РФ';
-
-      const roleClass = {
-        'government': 'author-card__btn--gov',
-        'editor':     'author-card__btn--editor',
-        'citizen':    'author-card__btn--citizen'
-      }[author.role] || 'author-card__btn--citizen';
-
-      const roleExtraClass = {
-        'government': 'author-card__btn--admin',
-        'editor':     'author-card__btn--forum'
-      }[author.role];
-
-      pageMain.innerHTML = `
-        <div class="pub-layout">
-          <aside class="author-card">
-            <div class="author-card__avatar">
-              ${author.photoUrl
-                ? `<img src="${esc(author.photoUrl)}" alt="${esc(author.nickname)}">`
-                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
-              <span class="author-card__status-dot"></span>
-            </div>
-            <div class="author-card__name">${esc(author.nickname)}</div>
-            <div class="author-card__rank-line">
-              <span class="author-card__dots"><i></i><i></i><i></i></span>
-              <span>${esc(author.rank || roleLabel)}</span>
-              <span class="author-card__dots"><i></i><i></i><i></i></span>
-            </div>
-            <div class="author-card__btn ${roleClass}">${roleLabel}</div>
-          </aside>
-
-          <article class="pub-doc">
-            <header class="pub-doc__head">
-              <h1 class="pub-doc__title">${esc(pub.title || 'Без названия')}</h1>
-              ${pub.subtitle ? `<p class="pub-doc__subtitle">${esc(pub.subtitle)}</p>` : ''}
-              <div class="pub-doc__meta">
-                <span class="pub-doc__meta-item">
-                  <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
-                  <span>${formatDate(pub.createdAt)}</span>
-                </span>
-                <span class="pub-doc__meta-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
-                  <span>${esc(author.nickname)}</span>
-                </span>
-              </div>
-            </header>
-
-            <img class="pub-doc__image" src="${esc(pub.imageUrl || '')}" alt="${esc(pub.title || '')}" loading="lazy">
-
-            <a href="javascript:history.back()" class="pub-doc__back">← Назад</a>
-          </article>
-        </div>
-      `;
     }
 
     function formatDate(ts) {
@@ -316,9 +126,6 @@
       const d = ts.toDate ? ts.toDate() : new Date(ts);
       const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
       return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear() + ' года';
-    }
-    function esc(s) {
-      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
   </script>
 </body>
