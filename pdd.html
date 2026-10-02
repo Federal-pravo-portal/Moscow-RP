@@ -26,6 +26,44 @@
       .doc-signs__item img { max-width: 100px; }
       .doc-signs__item figcaption { font-size: 13px; }
     }
+
+    .doc-signature {
+      margin: 28px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .doc-signature__label {
+      font-size: 14px;
+      color: #111;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .doc-signature__name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      font-style: italic;
+      font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    .doc-signature__image {
+      max-width: 220px;
+      height: auto;
+      display: block;
+      margin-top: 4px;
+      opacity: 1;
+    }
+    @media (max-width: 640px) {
+      .doc-signature {
+        margin-top: 20px;
+        align-items: center;
+        text-align: center;
+      }
+      .doc-signature__image { max-width: 180px; }
+      .doc-signature__name { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -98,6 +136,8 @@
       <div class="doc-preamble doc-preamble--right">
         <p>Принят Государственной Думой 30 августа 2026 года.<br>Одобрен Советом Федерации 01 сентября 2026 года.</p>
       </div>
+
+      <!-- ГЛАВЫ НИЖЕ (из старого файла) -->
 
       <h2 class="doc-chapter" id="ch-1">Глава I. Общие положения</h2>
       <p class="doc-article"><strong>Статья 1.1.</strong><br>Настоящие Правила дорожного движения (в дальнейшем — Правила) устанавливают единый порядок дорожного движения на всей территории Российской Федерации. Другие нормативные правовые акты, касающиеся дорожного движения, должны основываться на требованиях Правил и не противоречить им.</p>
@@ -305,6 +345,12 @@
       <p class="doc-article"><strong>Знак 1.56.</strong> "Движение механических транспортных средств запрещено" запрещает движение соответствующих видов транспортных средств в обоих направлениях, исключая: гужевые повозки, веломобили, велосипеды, мопеды, служебные транспортные средства с включенными проблесковыми маячками, или при использовании таковых транспортных средств без включенных транспортных средств с целью проезда к месту работы, транспортные средства управляемые инвалидами I и II групп, перевозящие таких инвалидов и (или) детей-инвалидов, если на указанных транспортных средствах установлен опознавательный знак "Инвалид".</p>
       <p class="doc-article"><strong>Знак 1.57.</strong> "Движение грузовых автомобилей запрещено" запрещает движение соответствующих видов транспортных средств в обоих направлениях, исключая: трактора, самоходные машины, маршрутные т\с или грузовые с прицепом до 10 тонн.</p>
 
+            <div class="doc-signature">
+        <div class="doc-signature__label">Президент Российской Федерации</div>
+        <div class="doc-signature__name">Калинин Д. Р.</div>
+        <img src="podpis.png" alt="Подпись Президента Российской Федерации Калинина Д. Р." class="doc-signature__image" loading="lazy">
+      </div>
+      
       <div class="doc-signs">
         <h3 class="doc-signs__title">Дорожные знаки</h3>
 

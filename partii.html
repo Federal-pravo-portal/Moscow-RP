@@ -9,6 +9,45 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .doc-signature {
+      margin: 28px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .doc-signature__label {
+      font-size: 14px;
+      color: #111;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .doc-signature__name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      font-style: italic;
+      font-family: 'Georgia', 'Times New Roman', serif;
+    }
+    .doc-signature__image {
+      max-width: 220px;
+      height: auto;
+      display: block;
+      margin-top: 4px;
+      opacity: 1;
+    }
+    @media (max-width: 640px) {
+      .doc-signature {
+        margin-top: 20px;
+        align-items: center;
+        text-align: center;
+      }
+      .doc-signature__image { max-width: 180px; }
+      .doc-signature__name { font-size: 16px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -185,6 +224,12 @@
       <p class="doc-article"><strong>Статья 94.</strong><br>Решение суда о приостановлении деятельности либо ликвидации политической партии, ее регионального отделения и иного структурного подразделения может быть обжаловано в случаях и порядке, установленных федеральным законом.</p>
       <p class="doc-article"><strong>Статья 95.</strong><br>Отмена решения суда о приостановлении деятельности либо ликвидации политической партии, ее регионального отделения и иного структурного подразделения влечет за собой возмещение государством всех убытков, понесенных политической партией в связи с незаконным приостановлением ее деятельности, деятельности регионального отделения и иного структурного подразделения политической партии либо незаконной ликвидацией политической партии, ее регионального отделения и иного структурного подразделения.</p>
       <p class="doc-article"><strong>Статья 96.</strong><br>В случае ликвидации политической партии ее имущество после завершения расчетов по ее обязательствам передается:<br>а) на цели, предусмотренные уставом и программой политической партии, если ликвидация политической партии осуществлена по решению съезда политической партии;<br>б) в доход федерального бюджета, если ликвидация политической партии осуществлена по решению суда.</p>
+
+      <div class="doc-signature">
+        <div class="doc-signature__label">Президент Российской Федерации</div>
+        <div class="doc-signature__name">Калинин Д. Р.</div>
+        <img src="podpis.png" alt="Подпись Президента Российской Федерации Калинина Д. Р." class="doc-signature__image" loading="lazy">
+      </div>
 
     </article>
   </div>
