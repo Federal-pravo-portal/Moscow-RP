@@ -9,25 +9,86 @@
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
-    .post-image-wrap {
-      margin: 32px 0 0;
-      text-align: center;
+    .pub-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: start;
     }
-    .post-image {
+
+    /* Левая панель-заглушка */
+    .pub-side {
+      background: #f4f4f4;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      min-height: 380px;
+      position: sticky;
+      top: 90px;
+    }
+
+    /* Правая колонка — сам документ */
+    .pub-doc { max-width: 900px; }
+
+    .pub-doc__title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111;
+      margin: 0 0 14px;
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    .pub-doc__subtitle {
+      font-size: 16px;
+      color: #444;
+      margin: 0 0 18px;
+      line-height: 1.5;
+    }
+    .pub-doc__meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #777;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 24px;
+    }
+    .pub-doc__meta-icon {
+      display: inline-flex;
+      align-items: center;
+      color: #c9a24a;
+    }
+    .pub-doc__image {
       max-width: 100%;
       height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
       border: 1px solid #e8e8e8;
       box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      border-radius: 4px;
     }
-    .post-back {
+    .pub-doc__back {
       display: inline-block;
       margin-top: 28px;
       font-size: 15px;
       color: #666;
       text-decoration: none;
     }
-    .post-back:hover { opacity: 0.7; }
+    .pub-doc__back:hover { opacity: 0.7; }
+
+    @media (max-width: 960px) {
+      .pub-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .pub-side {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -66,18 +127,23 @@
   </header>
 
   <main class="page">
-    <header class="page__head">
-      <h1 class="page__title" id="pubTitle">Загрузка…</h1>
-      <p class="page__subtitle" id="pubSubtitle"></p>
-    </header>
+    <div class="pub-layout">
+      <!-- Левая панель-заглушка -->
+      <aside class="pub-side" id="pubSide"></aside>
 
-    <p id="pubMeta" style="text-align:center;color:#777;font-size:14px;margin-bottom:24px;"></p>
+      <!-- Правая колонка с документом -->
+      <article class="pub-doc">
+        <header class="pub-doc__head">
+          <h1 class="pub-doc__title" id="pubTitle">Загрузка…</h1>
+          <p class="pub-doc__subtitle" id="pubSubtitle"></p>
+          <div class="pub-doc__meta" id="pubMeta"></div>
+        </header>
 
-    <div class="post-image-wrap">
-      <img src="" alt="" class="post-image" id="pubImage">
+        <img class="pub-doc__image" id="pubImage" src="" alt="">
+
+        <a href="javascript:history.back()" class="pub-doc__back">← Назад</a>
+      </article>
     </div>
-
-    <a href="javascript:history.back()" class="post-back">← Назад</a>
   </main>
 
   <script type="module" src="js/auth-header.js?v=22"></script>
@@ -114,7 +180,12 @@
 
         const dateStr = formatDate(pub.createdAt);
         const authorStr = pub.author || '';
-        metaEl.textContent = [dateStr, authorStr].filter(Boolean).join(' · ');
+        metaEl.innerHTML = `
+          <span class="pub-doc__meta-icon">
+            <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
+          </span>
+          <span>${esc([dateStr, authorStr].filter(Boolean).join(' · '))}</span>
+        `;
 
         if (pub.imageUrl) {
           imageEl.src = pub.imageUrl;
@@ -131,6 +202,10 @@
       const d = ts.toDate ? ts.toDate() : new Date(ts);
       const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
       return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear() + ' года';
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
   </script>
 </body>
