@@ -10,32 +10,92 @@
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
     .profile-card {
-      max-width: 560px;
+      max-width: 640px;
       margin: 40px auto 0;
       background: #fff;
       border: 1px solid #e8e8e8;
       border-radius: 16px;
       padding: 36px 32px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-      text-align: center;
+    }
+
+    .profile-card__photo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
     }
     .profile-card__avatar {
-      width: 110px; height: 110px;
+      width: 130px; height: 130px;
       border-radius: 50%;
       background: #f4f4f4;
-      margin: 0 auto 20px;
+      overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       color: #bbb;
       border: 3px solid #fff;
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
-    .profile-card__name {
-      font-size: 24px; font-weight: 700; color: #111;
-      margin: 0 0 8px;
-      line-height: 1.3;
+    .profile-card__avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
     }
-    .profile-card__email {
-      font-size: 14px; color: #666; margin: 0 0 18px;
+    .profile-card__avatar svg { width: 56px; height: 56px; }
+
+    .profile-card__photo-btn {
+      display: inline-block;
+      padding: 9px 16px;
+      border: 1.5px dashed #c9a24a;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #c9a24a;
+      font-weight: 600;
+      cursor: pointer;
+      background: #fff;
+      transition: background .15s ease;
+    }
+    .profile-card__photo-btn input { display: none; }
+    .profile-card__photo-btn:hover { background: #fff8e6; }
+
+    .profile-card__field {
+      margin-bottom: 20px;
+    }
+    .profile-card__label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .profile-card__input,
+    .profile-card__select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      border: 1.5px solid #d8d8d8;
+      border-radius: 8px;
+      outline: none;
+      box-sizing: border-box;
+      background: #fff;
+      color: #111;
+      transition: border-color .2s ease;
+    }
+    .profile-card__input:focus,
+    .profile-card__select:focus { border-color: #c9a24a; }
+
+    .profile-card__role-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .profile-card__role-label {
+      font-size: 13px;
+      color: #666;
     }
     .profile-card__role {
       display: inline-block;
@@ -51,27 +111,60 @@
     .profile-card__role--editor { background: #c9a24a; }
 
     .profile-card__actions {
-      margin-top: 32px;
-      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+      display: flex; gap: 12px; flex-wrap: wrap;
     }
     .profile-card__btn {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 22px;
+      padding: 13px 22px;
       font-size: 14px; font-weight: 600;
       border-radius: 8px; cursor: pointer; font-family: inherit;
       text-decoration: none; border: none;
+      transition: background .2s ease;
     }
-    .profile-card__btn--main {
+    .profile-card__btn--save {
       background: #c9302c; color: #fff;
+      flex: 1;
     }
-    .profile-card__btn--main:hover { background: #a82822; }
+    .profile-card__btn--save:hover { background: #a82822; }
+    .profile-card__btn--save:disabled { opacity: .6; cursor: not-allowed; }
     .profile-card__btn--ghost {
       background: #f4f4f4; color: #333;
     }
     .profile-card__btn--ghost:hover { background: #e8e8e8; }
 
-    .profile-card__loader {
-      color: #888; font-size: 15px; padding: 30px 0;
+    .profile-card__message {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .profile-card__message.is-error {
+      display: block;
+      background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd;
+    }
+    .profile-card__message.is-success {
+      display: block;
+      background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf;
+    }
+
+    .profile-card__progress {
+      margin-top: 12px;
+      height: 6px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      display: none;
+    }
+    .profile-card__progress.is-visible { display: block; }
+    .profile-card__progress-bar {
+      height: 100%; background: #c9a24a; width: 0; transition: width .3s ease;
+    }
+
+    @media (max-width: 640px) {
+      .profile-card { padding: 24px 20px; }
+      .profile-card__role-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .profile-card__btn--save, .profile-card__btn--ghost { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -117,76 +210,240 @@
     </header>
 
     <div class="profile-card" id="profileCard">
-      <p class="profile-card__loader">Загрузка профиля…</p>
+      <p style="text-align:center;color:#888;padding:30px 0;">Загрузка профиля…</p>
     </div>
   </main>
 
   <script type="module" src="js/auth-header.js?v=22"></script>
 
   <script type="module">
-    import { auth } from "./js/firebase-config.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
+    const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
+    const REGIONS = [
+      "Москва",
+      "Санкт-Петербург",
+      "Московская область",
+      "Ленинградская область",
+      "Республика Крым",
+      "Краснодарский край",
+      "Свердловская область",
+      "Новосибирская область",
+      "Республика Татарстан",
+      "Ростовская область",
+      "Нижегородская область",
+      "Челябинская область",
+      "Самарская область",
+      "Омская область",
+      "Воронежская область",
+      "Пермский край",
+      "Волгоградская область",
+      "Саратовская область",
+      "Красноярский край",
+      "Тюменская область"
+    ];
 
     const card = document.getElementById('profileCard');
+
+    let currentUser = null;
+    let currentRole = 'citizen';
+    let currentPhotoUrl = '';
+    let currentRegion = '';
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = 'login.html';
         return;
       }
+      currentUser = user;
 
-      let role = 'citizen';
       try {
         const token = await user.getIdTokenResult();
-        role = token.claims.role || 'citizen';
+        currentRole = token.claims.role || 'citizen';
       } catch (e) {}
+
+      await loadProfile();
+    });
+
+    async function loadProfile() {
+      const user = currentUser;
+      let profile = {};
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) profile = snap.data();
+      } catch (e) {
+        console.error("Ошибка чтения профиля:", e);
+      }
+
+      const displayName = profile.nickname || user.displayName || (user.email || '').split('@')[0] || 'Гражданин РФ';
+      const photoUrl = profile.photoUrl || user.photoURL || '';
+      currentPhotoUrl = photoUrl;
+      currentRegion = profile.region || '';
 
       const roleLabel = {
         'government': 'Правительство',
         'editor':     'Администратор',
         'citizen':    'Гражданин РФ'
-      }[role] || 'Гражданин РФ';
+      }[currentRole] || 'Гражданин РФ';
 
       const roleClass = {
         'government': 'profile-card__role--government',
         'editor':     'profile-card__role--editor',
         'citizen':    'profile-card__role--citizen'
-      }[role] || 'profile-card__role--citizen';
-
-      const displayName = user.displayName || (user.email || '').split('@')[0] || 'Гражданин РФ';
+      }[currentRole] || 'profile-card__role--citizen';
 
       card.innerHTML = `
-        <div class="profile-card__avatar">
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <h2 class="profile-card__name">${escapeHtml(displayName)}</h2>
-        <p class="profile-card__email">${escapeHtml(user.email || '')}</p>
-        <span class="profile-card__role ${roleClass}">${roleLabel}</span>
+        <form id="profileForm">
+          <div class="profile-card__photo-block">
+            <div class="profile-card__avatar" id="avatarPreview">
+              ${photoUrl
+                ? `<img src="${escapeHtml(photoUrl)}" alt="Аватар">`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+            </div>
+            <label class="profile-card__photo-btn">
+              <input type="file" id="photoInput" accept="image/*">
+              Загрузить фото
+            </label>
+          </div>
 
-        <div class="profile-card__actions">
-          <a href="index.html" class="profile-card__btn profile-card__btn--ghost">
-            На главную
-          </a>
-          <button class="profile-card__btn profile-card__btn--main" id="logoutBtn" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Выйти
-          </button>
-        </div>
+          <div class="profile-card__field">
+            <label class="profile-card__label" for="nickname">Ник</label>
+            <input class="profile-card__input" type="text" id="nickname" maxlength="40"
+                   value="${escapeHtml(displayName)}" placeholder="Введите ник" required>
+          </div>
+
+          <div class="profile-card__field">
+            <label class="profile-card__label" for="region">Регион</label>
+            <select class="profile-card__select" id="region" required>
+              <option value="">— выберите регион —</option>
+              ${REGIONS.map(r => `<option value="${escapeHtml(r)}"${r === currentRegion ? ' selected' : ''}>${escapeHtml(r)}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="profile-card__role-row">
+            <div class="profile-card__role-label">Роль на проекте</div>
+            <div class="profile-card__role ${roleClass}">${roleLabel}</div>
+          </div>
+
+          <div class="profile-card__actions">
+            <button type="submit" class="profile-card__btn profile-card__btn--save" id="saveBtn">
+              Сохранить
+            </button>
+            <a href="index.html" class="profile-card__btn profile-card__btn--ghost">
+              На главную
+            </a>
+            <button type="button" class="profile-card__btn profile-card__btn--ghost" id="logoutBtn">
+              Выйти
+            </button>
+          </div>
+
+          <div class="profile-card__progress" id="progress"><div class="profile-card__progress-bar" id="progressBar"></div></div>
+          <div class="profile-card__message" id="message"></div>
+        </form>
       `;
 
-      // Обработка кнопки «Выйти»
+      const photoInput = document.getElementById('photoInput');
+      const avatarPreview = document.getElementById('avatarPreview');
+      const form = document.getElementById('profileForm');
+      const message = document.getElementById('message');
+      const saveBtn = document.getElementById('saveBtn');
+      const progress = document.getElementById('progress');
+      const progressBar = document.getElementById('progressBar');
+
+      let pendingFile = null;
+
+      photoInput.addEventListener('change', () => {
+        const file = photoInput.files[0];
+        if (!file) return;
+        pendingFile = file;
+        const url = URL.createObjectURL(file);
+        avatarPreview.innerHTML = `<img src="${url}" alt="Аватар">`;
+      });
+
       document.getElementById('logoutBtn').addEventListener('click', async () => {
         try {
           await signOut(auth);
           window.location.href = 'index.html';
-        } catch (err) {
-          console.error(err);
+        } catch (e) {
+          console.error(e);
         }
       });
-    });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const nickname = document.getElementById('nickname').value.trim();
+        const region = document.getElementById('region').value;
+
+        if (!nickname || !region) {
+          showMessage('Заполните все поля.', 'error');
+          return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Сохранение...';
+        progress.classList.add('is-visible');
+        progressBar.style.width = '0%';
+
+        try {
+          let photoUrl = currentPhotoUrl;
+
+          if (pendingFile) {
+            const fd = new FormData();
+            fd.append('file', pendingFile);
+            fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`, {
+              method: 'POST',
+              body: fd
+            });
+            if (!res.ok) {
+              const err = await res.json();
+              throw new Error((err.error && err.error.message) || 'Ошибка Cloudinary');
+            }
+            const data = await res.json();
+            photoUrl = data.secure_url;
+          }
+
+          progressBar.style.width = '100%';
+
+          await setDoc(doc(db, 'users', currentUser.uid), {
+            nickname: nickname,
+            region: region,
+            photoUrl: photoUrl,
+            email: currentUser.email || '',
+            role: currentRole,
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+
+          // Обновляем displayName и photoURL в Firebase Auth
+          try {
+            await updateProfile(currentUser, { displayName: nickname, photoURL: photoUrl });
+          } catch (e) { console.error("updateProfile:", e); }
+
+          currentPhotoUrl = photoUrl;
+          showMessage('Сохранено!', 'success');
+
+        } catch (err) {
+          console.error(err);
+          showMessage('Ошибка: ' + err.message, 'error');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Сохранить';
+        }
+      });
+
+      function showMessage(text, type) {
+        message.textContent = text;
+        message.className = 'profile-card__message ' + (type === 'error' ? 'is-error' : 'is-success');
+      }
+    }
 
     function escapeHtml(s) {
       return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
