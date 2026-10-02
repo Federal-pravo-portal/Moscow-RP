@@ -45,7 +45,7 @@
   <main class="page">
     <header class="page__head">
       <h1 class="page__title">Новая публикация</h1>
-      <p class="page__subtitle">Введите название, выберите раздел и загрузите изображение</p>
+      <p class="page__subtitle">Введите название, выберите раздел, орган и загрузите изображение</p>
     </header>
 
     <form class="pub-form" id="pubForm">
@@ -81,6 +81,37 @@
           <option value="sudy">Акты судов РФ</option>
           <option value="ustavy">Уставы и положения о работе государственных органов</option>
         </select>
+      </div>
+
+      <div class="pub-form__field">
+        <label class="pub-form__label" for="author">Публикуется от имени</label>
+        <select class="pub-form__select" id="author" required>
+          <option value="">— выберите орган —</option>
+          <option value="Правительство Российской Федерации">Правительство Российской Федерации</option>
+          <option value="Президент Российской Федерации">Президент Российской Федерации</option>
+          <option value="Администрация Президента Российской Федерации">Администрация Президента Российской Федерации</option>
+          <option value="Совет Федерации Федерального Собрания Российской Федерации">Совет Федерации Федерального Собрания РФ</option>
+          <option value="Государственная Дума Федерального Собрания Российской Федерации">Государственная Дума Федерального Собрания РФ</option>
+          <option value="Законодательное Собрание Российской Федерации">Законодательное Собрание РФ</option>
+          <option value="Центральная избирательная комиссия Российской Федерации">Центральная избирательная комиссия РФ</option>
+          <option value="Совет Безопасности Российской Федерации">Совет Безопасности Российской Федерации</option>
+          <option value="Министерство внутренних дел Российской Федерации">Министерство внутренних дел РФ</option>
+          <option value="Министерство обороны Российской Федерации">Министерство обороны РФ</option>
+          <option value="Министерство здравоохранения Российской Федерации">Министерство здравоохранения РФ</option>
+          <option value="Министерство юстиции Российской Федерации">Министерство юстиции РФ</option>
+          <option value="Генеральная прокуратура Российской Федерации">Генеральная прокуратура РФ</option>
+          <option value="Следственный комитет Российской Федерации">Следственный комитет РФ</option>
+          <option value="Федеральная служба безопасности Российской Федерации">Федеральная служба безопасности РФ</option>
+          <option value="Федеральная служба исполнения наказаний Российской Федерации">Федеральная служба исполнения наказаний РФ</option>
+          <option value="Верховный Суд Российской Федерации">Верховный Суд РФ</option>
+          <option value="Конституционный Суд Российской Федерации">Конституционный Суд РФ</option>
+          <option value="__custom__">— другое (ввести вручную) —</option>
+        </select>
+      </div>
+
+      <div class="pub-form__field" id="customAuthorField" style="display:none;">
+        <label class="pub-form__label" for="customAuthor">Своё название органа</label>
+        <input class="pub-form__input" type="text" id="customAuthor" placeholder="Например: Аппарат Правительства РФ">
       </div>
 
       <div class="pub-form__field">
@@ -135,6 +166,9 @@
     const titleInput = document.getElementById('title');
     const subtitleInput = document.getElementById('subtitle');
     const sectionSelect = document.getElementById('section');
+    const authorSelect = document.getElementById('author');
+    const customAuthorField = document.getElementById('customAuthorField');
+    const customAuthorInput = document.getElementById('customAuthor');
     const imageInput = document.getElementById('image');
     const preview = document.getElementById('preview');
     const submitBtn = document.getElementById('submitBtn');
@@ -142,6 +176,19 @@
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progressBar');
 
+    // При выборе «другое» — показываем поле для ручного ввода
+    authorSelect.addEventListener('change', () => {
+      if (authorSelect.value === '__custom__') {
+        customAuthorField.style.display = 'block';
+        customAuthorInput.required = true;
+      } else {
+        customAuthorField.style.display = 'none';
+        customAuthorInput.required = false;
+        customAuthorInput.value = '';
+      }
+    });
+
+    // Подставляем раздел из URL
     const params = new URLSearchParams(window.location.search);
     const presetSection = params.get('section');
     if (presetSection && SECTION_TO_PAGE[presetSection]) {
@@ -189,9 +236,12 @@
       const title = titleInput.value.trim();
       const subtitle = subtitleInput.value.trim();
       const section = sectionSelect.value;
+      const authorValue = authorSelect.value === '__custom__'
+        ? customAuthorInput.value.trim()
+        : authorSelect.value;
       const file = imageInput.files[0];
 
-      if (!title || !subtitle || !section || !file) {
+      if (!title || !subtitle || !section || !authorValue || !file) {
         showMessage('Заполните все поля.', 'error');
         return;
       }
@@ -229,7 +279,8 @@
           subtitle: subtitle,
           imageUrl: imageUrl,
           section: section,
-          author: currentUser.displayName || currentUser.email.split('@')[0],
+          author: authorValue,
+          authorName: currentUser.displayName || currentUser.email.split('@')[0],
           authorEmail: currentUser.email,
           authorUid: currentUser.uid,
           authorRole: currentRole,
