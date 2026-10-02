@@ -1,5 +1,6 @@
-import { auth } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const authGuest = document.getElementById("authGuest");
 const authProfile = document.getElementById("authProfile");
@@ -15,7 +16,6 @@ function ensureAvatarEl() {
     img.className = 'auth-avatar';
     img.alt = '';
     img.style.display = 'none';
-    // Вставляем перед основной SVG-иконкой
     const svg = authProfile.querySelector('svg');
     if (svg) authProfile.insertBefore(img, svg);
     else authProfile.prepend(img);
@@ -37,13 +37,30 @@ onAuthStateChanged(auth, async (user) => {
     authProfileName.textContent = user.displayName || user.email || "Профиль";
   }
 
-  // 🖼 Аватар
+  // 🖼 Аватар: сначала берём из Firestore users/{uid}.photoUrl,
+  // если нет — из user.photoURL, если и тут нет — стандартная SVG.
+  let photoUrl = '';
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists() && snap.data().photoUrl) {
+      photoUrl = snap.data().photoUrl;
+    } else if (user.photoURL) {
+      photoUrl = user.photoURL;
+    }
+    if (snap.exists() && snap.data().nickname) {
+      authProfileName.textContent = snap.data().nickname;
+    }
+  } catch (e) {
+    console.warn("Не удалось прочитать users/" + user.uid, e);
+    photoUrl = user.photoURL || '';
+  }
+
   const avatarImg = ensureAvatarEl();
   const defaultSvg = authProfile.querySelector('svg');
 
   if (avatarImg) {
-    if (user.photoURL) {
-      avatarImg.src = user.photoURL;
+    if (photoUrl) {
+      avatarImg.src = photoUrl;
       avatarImg.style.display = 'inline-block';
       if (defaultSvg) defaultSvg.style.display = 'none';
     } else {
@@ -59,7 +76,6 @@ onAuthStateChanged(auth, async (user) => {
 
     if (authProfileBadge) {
       authProfileBadge.style.background = "#fff";
-      authProfileBadge.style.color = "#c9a24a";
       authProfileBadge.style.fontSize = "10px";
       authProfileBadge.style.fontWeight = "800";
       authProfileBadge.style.letterSpacing = ".02em";

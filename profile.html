@@ -82,6 +82,9 @@
     }
     .profile-card__input:focus,
     .profile-card__select:focus { border-color: #c9a24a; }
+    .profile-card__input:disabled {
+      background: #f7f7f7; color: #777; cursor: not-allowed;
+    }
 
     .profile-card__role-row {
       display: flex;
@@ -252,7 +255,6 @@
     let currentUser = null;
     let currentRole = 'citizen';
     let currentPhotoUrl = '';
-    let currentRegion = '';
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -282,8 +284,11 @@
 
       const displayName = profile.nickname || user.displayName || (user.email || '').split('@')[0] || 'Гражданин РФ';
       const photoUrl = profile.photoUrl || user.photoURL || '';
+      const email = user.email || profile.email || '';
+      const phone = profile.phone || '';
+      const region = profile.region || '';
+
       currentPhotoUrl = photoUrl;
-      currentRegion = profile.region || '';
 
       const roleLabel = {
         'government': 'Правительство',
@@ -318,10 +323,25 @@
           </div>
 
           <div class="profile-card__field">
+            <label class="profile-card__label" for="email">Почта</label>
+            <input class="profile-card__input" type="email" id="email"
+                   value="${escapeHtml(email)}" disabled>
+            <div class="profile-card__hint" style="font-size:12px;color:#999;margin-top:6px;">
+              Почта привязана к аккаунту и не может быть изменена.
+            </div>
+          </div>
+
+          <div class="profile-card__field">
+            <label class="profile-card__label" for="phone">Номер телефона (по желанию)</label>
+            <input class="profile-card__input" type="tel" id="phone" maxlength="20"
+                   value="${escapeHtml(phone)}" placeholder="+7 (___) ___-__-__">
+          </div>
+
+          <div class="profile-card__field">
             <label class="profile-card__label" for="region">Регион</label>
             <select class="profile-card__select" id="region" required>
               <option value="">— выберите регион —</option>
-              ${REGIONS.map(r => `<option value="${escapeHtml(r)}"${r === currentRegion ? ' selected' : ''}>${escapeHtml(r)}</option>`).join('')}
+              ${REGIONS.map(r => `<option value="${escapeHtml(r)}"${r === region ? ' selected' : ''}>${escapeHtml(r)}</option>`).join('')}
             </select>
           </div>
 
@@ -379,10 +399,11 @@
         if (!currentUser) return;
 
         const nickname = document.getElementById('nickname').value.trim();
+        const phone = document.getElementById('phone').value.trim();
         const region = document.getElementById('region').value;
 
         if (!nickname || !region) {
-          showMessage('Заполните все поля.', 'error');
+          showMessage('Заполните обязательные поля.', 'error');
           return;
         }
 
@@ -415,6 +436,7 @@
 
           await setDoc(doc(db, 'users', currentUser.uid), {
             nickname: nickname,
+            phone: phone,
             region: region,
             photoUrl: photoUrl,
             email: currentUser.email || '',
@@ -422,13 +444,12 @@
             updatedAt: serverTimestamp()
           }, { merge: true });
 
-          // Обновляем displayName и photoURL в Firebase Auth
           try {
             await updateProfile(currentUser, { displayName: nickname, photoURL: photoUrl });
           } catch (e) { console.error("updateProfile:", e); }
 
           currentPhotoUrl = photoUrl;
-          showMessage('Сохранено!', 'success');
+          showMessage('Сохранено! Обновите страницу, чтобы изменения отобразились в шапке.', 'success');
 
         } catch (err) {
           console.error(err);
