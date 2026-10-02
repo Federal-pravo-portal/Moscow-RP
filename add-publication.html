@@ -124,6 +124,13 @@
       'ustavy':        'ustavy.html'
     };
 
+    function resolveRedirect(section) {
+      if (SECTION_TO_PAGE[section]) return SECTION_TO_PAGE[section];
+      const m = section.match(/^org-([a-zA-Z0-9]+)-(.+)$/);
+      if (m) return 'organization.html?id=' + m[1];
+      return 'akty.html';
+    }
+
     const form = document.getElementById('pubForm');
     const titleInput = document.getElementById('title');
     const subtitleInput = document.getElementById('subtitle');
@@ -135,10 +142,15 @@
     const progress = document.getElementById('progress');
     const progressBar = document.getElementById('progressBar');
 
-    // Автоподстановка раздела из URL (?section=...)
     const params = new URLSearchParams(window.location.search);
     const presetSection = params.get('section');
     if (presetSection && SECTION_TO_PAGE[presetSection]) {
+      sectionSelect.value = presetSection;
+    } else if (presetSection) {
+      const opt = document.createElement('option');
+      opt.value = presetSection;
+      opt.textContent = 'Раздел организации: ' + presetSection;
+      sectionSelect.appendChild(opt);
       sectionSelect.value = presetSection;
     }
 
@@ -225,7 +237,7 @@
         });
 
         showMessage('Готово! Перенаправление...', 'success');
-        const redirect = SECTION_TO_PAGE[section] || 'akty.html';
+        const redirect = resolveRedirect(section);
         setTimeout(() => { window.location.href = redirect; }, 1200);
 
       } catch (err) {

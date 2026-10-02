@@ -151,13 +151,14 @@
     const newPubLink = document.getElementById('newPubLink');
 
     let currentRole = 'citizen';
-    let currentTab = 'press';
+    let currentTab = null;
+    let TABS = [];
 
-    const TABS = orgId ? [
-      { id: 'press',     label: 'Пресс-служба',      section: 'org-' + orgId + '-press' },
-      { id: 'acts',      label: 'Акты',              section: 'org-' + orgId + '-acts' },
-      { id: 'normative', label: 'Нормативные акты',  section: 'org-' + orgId + '-normative' }
-    ] : [];
+    const DEFAULT_TABS = [
+      { label: 'Пресс-служба',     section: 'press' },
+      { label: 'Акты',             section: 'acts' },
+      { label: 'Нормативные акты', section: 'normative' }
+    ];
 
     if (!orgId) {
       orgPageEl.innerHTML = '<p style="text-align:center;color:#b3261e;padding:40px 0;">Организация не найдена.</p>';
@@ -173,7 +174,17 @@
           orgPageEl.innerHTML = '<p style="text-align:center;color:#b3261e;padding:40px 0;">Организация не найдена.</p>';
           return;
         }
-        renderOrg(snap.data());
+        const d = snap.data();
+
+        const rawTabs = Array.isArray(d.tabs) && d.tabs.length ? d.tabs : DEFAULT_TABS;
+        TABS = rawTabs.map(t => ({
+          label: t.label,
+          key: t.section,
+          section: 'org-' + orgId + '-' + t.section
+        }));
+
+        currentTab = TABS[0].key;
+        renderOrg(d);
         loadTab(currentTab);
       } catch (e) {
         console.error(e);
@@ -202,12 +213,10 @@
         </div>
 
         <div class="org-tabs" id="orgTabs">
-          ${TABS.map(t => `<button class="org-tab${t.id === currentTab ? ' is-active' : ''}" data-tab="${t.id}">${t.label}</button>`).join('')}
+          ${TABS.map(t => `<button class="org-tab${t.key === currentTab ? ' is-active' : ''}" data-tab="${esc(t.key)}">${esc(t.label)}</button>`).join('')}
         </div>
 
-        <div class="org-panel is-active" id="panel-press"><p class="org-panel__empty">Загрузка…</p></div>
-        <div class="org-panel" id="panel-acts"><p class="org-panel__empty">Загрузка…</p></div>
-        <div class="org-panel" id="panel-normative"><p class="org-panel__empty">Загрузка…</p></div>
+        ${TABS.map(t => `<div class="org-panel${t.key === currentTab ? ' is-active' : ''}" id="panel-${esc(t.key)}"><p class="org-panel__empty">Загрузка…</p></div>`).join('')}
       `;
 
       document.getElementById('orgTabs').addEventListener('click', (e) => {
@@ -225,14 +234,14 @@
 
     function updateNewPubLink() {
       if (!newPubLink) return;
-      const tab = TABS.find(t => t.id === currentTab);
+      const tab = TABS.find(t => t.key === currentTab);
       if (tab) newPubLink.href = 'add-publication.html?section=' + tab.section;
     }
 
-    async function loadTab(tabId) {
-      const tab = TABS.find(t => t.id === tabId);
+    async function loadTab(tabKey) {
+      const tab = TABS.find(t => t.key === tabKey);
       if (!tab) return;
-      const panel = document.getElementById('panel-' + tabId);
+      const panel = document.getElementById('panel-' + tabKey);
       panel.innerHTML = '<p class="org-panel__empty">Загрузка…</p>';
 
       try {
