@@ -8,6 +8,27 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .post-image-wrap {
+      margin: 32px 0 0;
+      text-align: center;
+    }
+    .post-image {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      border-radius: 4px;
+    }
+    .post-back {
+      display: inline-block;
+      margin-top: 28px;
+      font-size: 15px;
+      color: #666;
+      text-decoration: none;
+    }
+    .post-back:hover { opacity: 0.7; }
+  </style>
 </head>
 <body>
 
@@ -50,7 +71,7 @@
       <p class="page__subtitle" id="pubSubtitle"></p>
     </header>
 
-    <p style="text-align:center;color:#777;font-size:14px;margin-bottom:24px;" id="pubMeta"></p>
+    <p id="pubMeta" style="text-align:center;color:#777;font-size:14px;margin-bottom:24px;"></p>
 
     <div class="post-image-wrap">
       <img src="" alt="" class="post-image" id="pubImage">
@@ -58,28 +79,6 @@
 
     <a href="javascript:history.back()" class="post-back">← Назад</a>
   </main>
-
-  <style>
-    .post-image-wrap {
-      margin: 32px 0 0;
-      text-align: center;
-    }
-    .post-image {
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #e8e8e8;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      border-radius: 4px;
-    }
-    .post-back {
-      display: inline-block;
-      margin-top: 28px;
-      font-size: 15px;
-      color: #666;
-      text-decoration: none;
-    }
-    .post-back:hover { opacity: 0.7; }
-  </style>
 
   <script type="module" src="js/auth-header.js?v=22"></script>
 
@@ -112,9 +111,15 @@
 
         titleEl.textContent = pub.title || 'Без названия';
         subtitleEl.textContent = pub.subtitle || '';
-        metaEl.textContent = formatDate(pub.createdAt) + (pub.author ? ' · ' + pub.author : '');
-        imageEl.src = pub.imageUrl || '';
-        imageEl.alt = pub.title || '';
+
+        const dateStr = formatDate(pub.createdAt);
+        const authorStr = pub.author || '';
+        metaEl.textContent = [dateStr, authorStr].filter(Boolean).join(' · ');
+
+        if (pub.imageUrl) {
+          imageEl.src = pub.imageUrl;
+          imageEl.alt = pub.title || '';
+        }
       } catch (e) {
         console.error(e);
         titleEl.textContent = 'Ошибка загрузки';
