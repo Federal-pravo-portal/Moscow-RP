@@ -10,26 +10,12 @@
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
     .pub-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 48px;
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
-      align-items: start;
     }
 
-    /* Левая панель-заглушка */
-    .pub-side {
-      background: #f4f4f4;
-      border: 1px solid #e8e8e8;
-      border-radius: 12px;
-      min-height: 380px;
-      position: sticky;
-      top: 90px;
-    }
-
-    /* Правая колонка — сам документ */
-    .pub-doc { max-width: 900px; }
+    /* Колонка с документом */
+    .pub-doc { width: 100%; }
 
     .pub-doc__title {
       font-size: 26px;
@@ -79,16 +65,6 @@
       text-decoration: none;
     }
     .pub-doc__back:hover { opacity: 0.7; }
-
-    @media (max-width: 960px) {
-      .pub-layout {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      .pub-side {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body>
@@ -128,9 +104,6 @@
 
   <main class="page">
     <div class="pub-layout">
-      <!-- Левая панель-заглушка -->
-      <aside class="pub-side" id="pubSide"></aside>
-
       <!-- Правая колонка с документом -->
       <article class="pub-doc">
         <header class="pub-doc__head">
