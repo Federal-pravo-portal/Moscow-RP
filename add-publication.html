@@ -200,8 +200,17 @@
       currentUser = user;
       currentClaims = await getClaims(user);
 
-      const allowedAll = currentClaims.role === 'admin' || currentClaims.sections.includes('*');
-      if (!allowedAll) {
+      // ✅ Проверяем: может ли вообще кто-то из этой роли что-то публиковать
+      // - admin: всё
+      // - government: всё (мягкий фикс — пусть видят все разделы, rules сами ограничат)
+      // - остальные: только свои sections
+      const role = currentClaims.role || 'citizen';
+      const sections = currentClaims.sections || [];
+
+      const canPublishAnywhere = role === 'admin' || role === 'government' || sections.includes('*');
+
+      // Фильтруем опции, если пользователь НЕ может публиковать везде
+      if (!canPublishAnywhere) {
         Array.from(sectionSelect.options).forEach((opt) => {
           if (!opt.value) return;
           if (!canEdit(opt.value, currentClaims)) {
@@ -210,6 +219,7 @@
         });
       }
 
+      // Проверка: если после фильтрации не осталось доступных разделов
       if (sectionSelect.options.length <= 1) {
         showMessage('У вас нет прав на публикацию. Обратитесь к администрации.', 'error');
         submitBtn.disabled = true;
