@@ -67,6 +67,12 @@
       </div>
 
       <div class="org-form__field">
+        <label class="org-form__label" for="headPosition">Должность руководителя</label>
+        <input class="org-form__input" type="text" id="headPosition" placeholder="Например: Председатель Правительства" required>
+        <div class="org-form__hint">Отображается как заголовок над ФИО руководителя.</div>
+      </div>
+
+      <div class="org-form__field">
         <label class="org-form__label" for="head">Руководитель</label>
         <input class="org-form__input" type="text" id="head" placeholder="Иванов Иван Иванович" required>
         <div class="org-form__hint">ФИО руководителя организации.</div>
@@ -142,11 +148,12 @@
       const name = document.getElementById('name').value.trim();
       const shortName = document.getElementById('shortName').value.trim();
       const description = document.getElementById('description').value.trim();
+      const headPosition = document.getElementById('headPosition').value.trim();
       const head = document.getElementById('head').value.trim();
       const headRank = document.getElementById('headRank').value.trim();
       const file = logoInput.files[0];
 
-      if (!name || !shortName || !description || !head || !headRank || !file) {
+      if (!name || !shortName || !description || !headPosition || !head || !headRank || !file) {
         showMessage('Заполните все поля.', 'error');
         return;
       }
@@ -178,6 +185,7 @@
           name: name,
           shortName: shortName,
           description: description,
+          headPosition: headPosition,
           head: head,
           headRank: headRank,
           logoUrl: logoUrl,

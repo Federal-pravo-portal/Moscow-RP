@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Организация — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .org-page { max-width: 1100px; margin: 0 auto; }
+
+    .org-page__head {
+      display: flex; gap: 28px; align-items: center;
+      padding: 28px 32px; background: #fff;
+      border: 1px solid #e8e8e8; border-radius: 16px;
+      margin-bottom: 28px; box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+    }
+    .org-page__logo {
+      width: 110px; height: 110px; border-radius: 16px;
+      overflow: hidden; flex-shrink: 0; background: #f7f7f7;
+      border: 2px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .org-page__logo img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+    .org-page__short {
+      font-size: 30px; font-weight: 800; color: #111;
+      margin: 0 0 6px; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .org-page__name { font-size: 15px; color: #666; margin: 0 0 12px; }
+    .org-page__desc { font-size: 15px; color: #333; line-height: 1.6; margin: 0 0 14px; }
+    .org-page__head-info { display: flex; gap: 32px; flex-wrap: wrap; }
+    .org-page__head-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .org-page__head-name { font-size: 15px; color: #111; font-weight: 700; }
+    .org-page__head-rank { font-size: 13px; color: #666; font-style: italic; margin-top: 2px; }
+
+    .org-tabs {
+      display: flex; gap: 4px; border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 24px; overflow-x: auto;
+    }
+    .org-tab {
+      padding: 14px 22px; font-size: 15px; font-weight: 600; color: #666;
+      text-decoration: none; border-bottom: 3px solid transparent;
+      white-space: nowrap; cursor: pointer;
+      background: none; border-top: none; border-left: none; border-right: none;
+      font-family: inherit;
+      transition: color .15s ease, border-color .15s ease;
+    }
+    .org-tab:hover { color: #111; }
+    .org-tab.is-active { color: #c9302c; border-bottom-color: #c9302c; }
+
+    .org-panel { display: none; }
+    .org-panel.is-active { display: block; }
+    .org-panel__empty { text-align: center; color: #999; padding: 60px 0; font-size: 15px; }
+
+    .org-panel__list { list-style: none; margin: 0; padding: 0; }
+    .org-pub { padding: 22px 0; border-bottom: 1px solid #eee; position: relative; }
+    .org-pub:first-child { padding-top: 0; }
+    .org-pub:last-child { border-bottom: none; padding-bottom: 0; }
+    .org-pub__link { display: block; color: inherit; text-decoration: none; transition: opacity .15s ease; }
+    .org-pub__link:hover { opacity: 0.75; }
+    .org-pub__title { font-size: 20px; font-weight: 700; color: #111; margin: 0 0 8px; line-height: 1.3; }
+    .org-pub__date { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #666; margin: 0 0 8px; }
+    .org-pub__date svg { color: #c9a24a; flex-shrink: 0; }
+    .org-pub__desc { font-size: 15px; color: #333; margin: 0; line-height: 1.6; }
+
+    .org-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    }
+    .org-toolbar__back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; color: #666; text-decoration: none;
+    }
+    .org-toolbar__back:hover { color: #111; }
+    .org-toolbar__new {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; background: #c9302c; color: #fff;
+      border-radius: 8px; font-weight: 600; font-size: 13px; text-decoration: none;
+    }
+    .org-toolbar__new:hover { background: #a82822; }
+
+    @media (max-width: 640px) {
+      .org-page__head { flex-direction: column; text-align: center; padding: 22px; }
+      .org-page__head-info { justify-content: center; }
+      .org-page__short { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link is-current">Организации</a>
+      <a href="akty.html" class="site-header__link">Акты</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+    <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:12px;z-index:20;">
+      <div id="authGuest" style="display:none;align-items:center;gap:8px;">
+        <a href="login.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#4a4a4a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span>Войти</span>
+        </a>
+        <a href="register.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9302c;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          <span>Регистрация</span>
+        </a>
+      </div>
+      <a id="authProfile" href="profile.html" style="display:none;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9a24a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="authProfileName">Профиль</span>
+        <span id="authProfileBadge" style="display:none;background:#fff;color:#c9a24a;font-size:10px;font-weight:800;letter-spacing:.02em;padding:3px 6px;border-radius:4px;">Правительство</span>
+      </a>
+      <a href="search.html" class="site-header__discord" title="Поиск" aria-label="Поиск">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </a>
+      <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="org-toolbar">
+      <a href="organizations.html" class="org-toolbar__back">← Все организации</a>
+      <a href="#" class="org-toolbar__new" id="newPubLink" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Новая публикация
+      </a>
+    </div>
+
+    <div class="org-page" id="orgPage">
+      <p style="text-align:center;color:#888;padding:40px 0;">Загрузка организации…</p>
+    </div>
+  </main>
+
+  <script type="module" src="js/auth-header.js?v=22"></script>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.get('id');
+
+    const orgPageEl = document.getElementById('orgPage');
+    const newPubLink = document.getElementById('newPubLink');
+
+    let currentRole = 'citizen';
+    let currentTab = 'press';
+
+    const TABS = orgId ? [
+      { id: 'press',     label: 'Пресс-служба',      section: 'org-' + orgId + '-press' },
+      { id: 'acts',      label: 'Акты',              section: 'org-' + orgId + '-acts' },
+      { id: 'normative', label: 'Нормативные акты',  section: 'org-' + orgId + '-normative' }
+    ] : [];
+
+    if (!orgId) {
+      orgPageEl.innerHTML = '<p style="text-align:center;color:#b3261e;padding:40px 0;">Организация не найдена.</p>';
+    } else {
+      loadOrg();
+    }
+
+    async function loadOrg() {
+      try {
+        const ref = doc(db, 'organizations', orgId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          orgPageEl.innerHTML = '<p style="text-align:center;color:#b3261e;padding:40px 0;">Организация не найдена.</p>';
+          return;
+        }
+        renderOrg(snap.data());
+        loadTab(currentTab);
+      } catch (e) {
+        console.error(e);
+        orgPageEl.innerHTML = '<p style="text-align:center;color:#b3261e;padding:40px 0;">Ошибка загрузки.</p>';
+      }
+    }
+
+    function renderOrg(d) {
+      orgPageEl.innerHTML = `
+        <div class="org-page__head">
+          <div class="org-page__logo">
+            <img src="${esc(d.logoUrl || '')}" alt="${esc(d.shortName || '')}" loading="lazy">
+          </div>
+          <div style="flex:1;">
+            <h1 class="org-page__short">${esc(d.shortName || '')}</h1>
+            <p class="org-page__name">${esc(d.name || '')}</p>
+            <p class="org-page__desc">${esc(d.description || '')}</p>
+            <div class="org-page__head-info">
+              <div>
+                <div class="org-page__head-label">${esc(d.headPosition || 'Руководитель')}</div>
+                <div class="org-page__head-name">${esc(d.head || '')}</div>
+                <div class="org-page__head-rank">${esc(d.headRank || '')}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-tabs" id="orgTabs">
+          ${TABS.map(t => `<button class="org-tab${t.id === currentTab ? ' is-active' : ''}" data-tab="${t.id}">${t.label}</button>`).join('')}
+        </div>
+
+        <div class="org-panel is-active" id="panel-press"><p class="org-panel__empty">Загрузка…</p></div>
+        <div class="org-panel" id="panel-acts"><p class="org-panel__empty">Загрузка…</p></div>
+        <div class="org-panel" id="panel-normative"><p class="org-panel__empty">Загрузка…</p></div>
+      `;
+
+      document.getElementById('orgTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.org-tab');
+        if (!btn) return;
+        const tab = btn.getAttribute('data-tab');
+        if (!tab || tab === currentTab) return;
+        currentTab = tab;
+        document.querySelectorAll('.org-tab').forEach(t => t.classList.toggle('is-active', t.getAttribute('data-tab') === tab));
+        document.querySelectorAll('.org-panel').forEach(p => p.classList.toggle('is-active', p.id === 'panel-' + tab));
+        loadTab(tab);
+        updateNewPubLink();
+      });
+    }
+
+    function updateNewPubLink() {
+      if (!newPubLink) return;
+      const tab = TABS.find(t => t.id === currentTab);
+      if (tab) newPubLink.href = 'add-publication.html?section=' + tab.section;
+    }
+
+    async function loadTab(tabId) {
+      const tab = TABS.find(t => t.id === tabId);
+      if (!tab) return;
+      const panel = document.getElementById('panel-' + tabId);
+      panel.innerHTML = '<p class="org-panel__empty">Загрузка…</p>';
+
+      try {
+        const q = query(collection(db, 'publications'), where('section', '==', tab.section));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          panel.innerHTML = '<p class="org-panel__empty">Пока нет публикаций в этом разделе.</p>';
+          return;
+        }
+        const items = [];
+        snap.forEach(d => items.push({ id: d.id, data: d.data() }));
+        items.sort((a, b) => (b.data.createdAt?.toMillis?.() || 0) - (a.data.createdAt?.toMillis?.() || 0));
+        panel.innerHTML = '<ul class="org-panel__list">' + items.map(renderPub).join('') + '</ul>';
+      } catch (e) {
+        console.error(e);
+        panel.innerHTML = '<p class="org-panel__empty" style="color:#b3261e;">Ошибка загрузки.</p>';
+      }
+    }
+
+    function renderPub(item) {
+      const d = item.data;
+      return `
+        <li class="org-pub">
+          <a class="org-pub__link" href="publication.html?id=${item.id}">
+            <h2 class="org-pub__title">${esc(d.title || 'Без названия')}</h2>
+            <p class="org-pub__date">
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
+              <span>${formatDate(d.createdAt)}</span>
+            </p>
+            ${d.subtitle ? `<p class="org-pub__desc">${esc(d.subtitle)}</p>` : ''}
+          </a>
+        </li>`;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear() + ' года';
+    }
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const t = await user.getIdTokenResult();
+          currentRole = t.claims.role || 'citizen';
+        } catch (e) {}
+      }
+      if (newPubLink) {
+        newPubLink.style.display = (currentRole === 'government' || currentRole === 'editor') ? 'inline-flex' : 'none';
+        updateNewPubLink();
+      }
+    });
+  </script>
+</body>
+</html>
