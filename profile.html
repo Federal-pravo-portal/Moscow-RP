@@ -3,46 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Личный кабинет — Moscow RP</title>
+  <title>Профиль — Moscow RP</title>
   <link rel="icon" type="image/png" href="ikon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://static.tildacdn.com">
   <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
   <style>
     .profile-card {
-      max-width: 560px; margin: 0 auto; padding: 32px 28px;
-      background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px;
+      max-width: 560px;
+      margin: 40px auto 0;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+      text-align: center;
     }
-    .profile-row {
-      display: flex; justify-content: space-between;
-      padding: 14px 0; border-bottom: 1px solid #eee;
-      font-size: 15px;
+    .profile-card__avatar {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: #f4f4f4;
+      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      color: #bbb;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
-    .profile-row:last-child { border-bottom: none; }
-    .profile-row__label { color: #666; }
-    .profile-row__value { color: #111; font-weight: 600; }
-    .role-badge {
-      display: inline-block; padding: 4px 10px; border-radius: 6px;
-      font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    .profile-card__name {
+      font-size: 24px; font-weight: 700; color: #111;
+      margin: 0 0 8px;
+      line-height: 1.3;
     }
-    .role-badge--admin { background: #fbe9a8; color: #7a5a00; }
-    .role-badge--editor { background: #d7ebff; color: #1a4b8c; }
-    .role-badge--user { background: #eee; color: #555; }
-    .profile-btn {
-      display: inline-block; margin-top: 20px; padding: 12px 20px;
-      background: #c9a24a; color: #fff; text-decoration: none;
-      border-radius: 8px; font-weight: 600; font-size: 14px;
-      border: none; cursor: pointer; font-family: inherit;
+    .profile-card__email {
+      font-size: 14px; color: #666; margin: 0 0 18px;
     }
-    .profile-btn:hover { opacity: 0.85; }
-    .profile-btn--outline {
-      background: transparent; color: #b3261e; border: 1px solid #f3c0bd;
-      margin-left: 8px;
+    .profile-card__role {
+      display: inline-block;
+      font-size: 12px; font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: #c9a24a; color: #fff;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
-    .auth-warning {
-      text-align: center; padding: 40px 20px; color: #666;
+    .profile-card__role--citizen { background: #777; }
+    .profile-card__role--government { background: #c9a24a; }
+    .profile-card__role--editor { background: #c9a24a; }
+
+    .profile-card__actions {
+      margin-top: 32px;
+      display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
     }
-    .auth-warning a { color: #c9a24a; font-weight: 600; }
+    .profile-card__btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px;
+      font-size: 14px; font-weight: 600;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      text-decoration: none; border: none;
+    }
+    .profile-card__btn--main {
+      background: #c9302c; color: #fff;
+    }
+    .profile-card__btn--main:hover { background: #a82822; }
+    .profile-card__btn--ghost {
+      background: #f4f4f4; color: #333;
+    }
+    .profile-card__btn--ghost:hover { background: #e8e8e8; }
+
+    .profile-card__loader {
+      color: #888; font-size: 15px; padding: 30px 0;
+    }
   </style>
 </head>
 <body>
@@ -51,111 +81,116 @@
     <nav class="site-header__menu">
       <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
       <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link">Организации</a>
       <a href="akty.html" class="site-header__link">Акты</a>
     </nav>
     <a href="index.html" class="site-header__title">Moscow RP</a>
-    <a href="search.html" class="site-header__discord" title="Поиск" aria-label="Поиск">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="7"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-    </a>
-    <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-    </a>
+    <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:12px;z-index:20;">
+      <div id="authGuest" style="display:none;align-items:center;gap:8px;">
+        <a href="login.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#4a4a4a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span>Войти</span>
+        </a>
+        <a href="register.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9302c;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          <span>Регистрация</span>
+        </a>
+      </div>
+      <a id="authProfile" href="profile.html" style="display:none;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9a24a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="authProfileName">Профиль</span>
+        <span id="authProfileBadge" style="display:none;background:#fff;color:#c9a24a;font-size:10px;font-weight:800;letter-spacing:.02em;padding:3px 6px;border-radius:4px;">Правительство</span>
+      </a>
+      <a href="search.html" class="site-header__discord" title="Поиск" aria-label="Поиск">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </a>
+      <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+      </a>
+    </div>
   </header>
 
   <main class="page">
     <header class="page__head">
-      <h1 class="page__title">Личный кабинет</h1>
-      <p class="page__subtitle">Управление профилем и доступ к панели управления</p>
+      <h1 class="page__title">Профиль</h1>
+      <p class="page__subtitle">Информация о вашем аккаунте</p>
     </header>
 
-    <div id="loading" class="auth-warning">Загрузка...</div>
-
-    <div id="notLogged" class="auth-warning" style="display:none;">
-      <p>Вы не вошли в аккаунт.</p>
-      <p><a href="login.html">Войти</a> или <a href="register.html">зарегистрироваться</a>.</p>
-    </div>
-
-    <div id="profileBlock" style="display:none;">
-      <div class="profile-card">
-        <div class="profile-row">
-          <span class="profile-row__label">Email</span>
-          <span class="profile-row__value" id="userEmail">—</span>
-        </div>
-        <div class="profile-row">
-          <span class="profile-row__label">Имя</span>
-          <span class="profile-row__value" id="userName">—</span>
-        </div>
-        <div class="profile-row">
-          <span class="profile-row__label">Роль</span>
-          <span class="profile-row__value"><span id="userRole" class="role-badge role-badge--user">user</span></span>
-        </div>
-        <div class="profile-row">
-          <span class="profile-row__label">UID</span>
-          <span class="profile-row__value" id="userUid" style="font-size: 12px;">—</span>
-        </div>
-
-        <div id="adminPanel" style="display:none; margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee;">
-          <h3 style="margin: 0 0 12px; font-size: 17px;">Панель управления</h3>
-          <p style="margin: 0 0 16px; color: #666; font-size: 14px;">
-            У вас есть права на добавление контента. Скоро здесь появится кнопка «Добавить материал».
-          </p>
-        </div>
-
-        <button class="profile-btn" id="logoutBtn">Выйти</button>
-      </div>
+    <div class="profile-card" id="profileCard">
+      <p class="profile-card__loader">Загрузка профиля…</p>
     </div>
   </main>
 
+  <script type="module" src="js/auth-header.js?v=22"></script>
+
   <script type="module">
-  import { auth } from "./js/firebase-config.js";
-  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const loading = document.getElementById('loading');
-  const notLogged = document.getElementById('notLogged');
-  const profileBlock = document.getElementById('profileBlock');
+    const card = document.getElementById('profileCard');
 
-  onAuthStateChanged(auth, async (user) => {
-    loading.style.display = 'none';
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-    if (!user) {
-      notLogged.style.display = 'block';
-      profileBlock.style.display = 'none';
-      return;
+      let role = 'citizen';
+      try {
+        const token = await user.getIdTokenResult();
+        role = token.claims.role || 'citizen';
+      } catch (e) {}
+
+      const roleLabel = {
+        'government': 'Правительство',
+        'editor':     'Администратор',
+        'citizen':    'Гражданин РФ'
+      }[role] || 'Гражданин РФ';
+
+      const roleClass = {
+        'government': 'profile-card__role--government',
+        'editor':     'profile-card__role--editor',
+        'citizen':    'profile-card__role--citizen'
+      }[role] || 'profile-card__role--citizen';
+
+      const displayName = user.displayName || (user.email || '').split('@')[0] || 'Гражданин РФ';
+
+      card.innerHTML = `
+        <div class="profile-card__avatar">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <h2 class="profile-card__name">${escapeHtml(displayName)}</h2>
+        <p class="profile-card__email">${escapeHtml(user.email || '')}</p>
+        <span class="profile-card__role ${roleClass}">${roleLabel}</span>
+
+        <div class="profile-card__actions">
+          <a href="index.html" class="profile-card__btn profile-card__btn--ghost">
+            На главную
+          </a>
+          <button class="profile-card__btn profile-card__btn--main" id="logoutBtn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Выйти
+          </button>
+        </div>
+      `;
+
+      // Обработка кнопки «Выйти»
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+          await signOut(auth);
+          window.location.href = 'index.html';
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    });
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     }
-
-    profileBlock.style.display = 'block';
-
-    document.getElementById('userEmail').textContent = user.email || '—';
-    document.getElementById('userUid').textContent = user.uid;
-    document.getElementById('userName').textContent = user.displayName || '—';
-
-    // Читаем роль из Custom Claims
-    let role = 'user';
-    try {
-      const tokenResult = await user.getIdTokenResult(true); // true = принудительно обновить токен
-      role = tokenResult.claims.role || 'user';
-    } catch (err) {
-      console.warn('Не удалось прочитать роль:', err);
-    }
-
-    const roleEl = document.getElementById('userRole');
-    roleEl.textContent = role;
-    roleEl.className = 'role-badge role-badge--' + (
-      role === 'admin' ? 'admin' : role === 'editor' ? 'editor' : 'user'
-    );
-
-    if (role === 'admin' || role === 'editor') {
-      document.getElementById('adminPanel').style.display = 'block';
-    }
-  });
-
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = 'index.html';
-  });
-</script>
+  </script>
 </body>
 </html>
