@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новое обращение — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .obr-form-wrap { max-width: 720px; margin: 0 auto; }
+    .obr-form { padding: 32px 28px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px; }
+
+    .obr-form__target {
+      padding: 16px 20px;
+      background: #fff;
+      border: 1.5px solid #e0e6ed;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .obr-form__target-logo {
+      width: 50px; height: 50px; border-radius: 10px;
+      background: #f7f7f7; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+    .obr-form__target-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+    .obr-form__target-info { flex: 1; }
+    .obr-form__target-label {
+      font-size: 11px; color: #999;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+    }
+    .obr-form__target-name { font-size: 16px; font-weight: 700; color: #111; line-height: 1.3; }
+
+    .obr-form__title-preview {
+      padding: 14px 18px;
+      background: #fff8e6;
+      border: 1.5px solid #f0dcaa;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    .obr-form__title-preview-label {
+      font-size: 11px; color: #a68a2d;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 4px; font-weight: 600;
+    }
+    .obr-form__title-preview-text {
+      font-size: 15px; font-weight: 700; color: #111;
+      line-height: 1.4;
+    }
+
+    .obr-form__field { margin-bottom: 20px; }
+    .obr-form__label {
+      display: block; font-size: 14px; font-weight: 600;
+      color: #333; margin-bottom: 8px;
+    }
+    .obr-form__label-required { color: #c9302c; }
+    .obr-form__input,
+    .obr-form__textarea {
+      width: 100%; padding: 12px 14px;
+      font-size: 15px; font-family: inherit;
+      border: 1.5px solid #d8d8d8; border-radius: 8px;
+      outline: none; box-sizing: border-box;
+      background: #fff; color: #111;
+      transition: border-color .2s ease;
+    }
+    .obr-form__input:focus,
+    .obr-form__textarea:focus { border-color: #c9a24a; }
+    .obr-form__input:disabled {
+      background: #f4f4f4; color: #888; cursor: not-allowed;
+    }
+    .obr-form__textarea { min-height: 140px; resize: vertical; line-height: 1.6; }
+    .obr-form__hint { font-size: 12px; color: #999; margin-top: 6px; }
+
+    .obr-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .obr-form__row { grid-template-columns: 1fr; gap: 0; } }
+
+    .obr-form__actions { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+    .obr-form__btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 24px; font-size: 14px; font-weight: 600;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      text-decoration: none; border: none;
+      transition: background .2s ease;
+    }
+    .obr-form__btn--submit { background: #c9302c; color: #fff; flex: 1; min-width: 200px; }
+    .obr-form__btn--submit:hover { background: #a82822; }
+    .obr-form__btn--submit:disabled { opacity: .6; cursor: not-allowed; }
+    .obr-form__btn--cancel { background: #f4f4f4; color: #333; }
+    .obr-form__btn--cancel:hover { background: #e8e8e8; }
+
+    .obr-form__message {
+      margin-top: 16px; padding: 12px 14px;
+      border-radius: 8px; font-size: 14px; display: none;
+    }
+    .obr-form__message.is-error { display: block; background: #fdecec; color: #b3261e; border: 1px solid #f3c0bd; }
+    .obr-form__message.is-success { display: block; background: #eaf6ec; color: #1a6b31; border: 1px solid #b8dcbf; }
+
+    .obr-form__progress {
+      margin-top: 12px; height: 6px; background: #eee;
+      border-radius: 4px; overflow: hidden; display: none;
+    }
+    .obr-form__progress.is-visible { display: block; }
+    .obr-form__progress-bar {
+      height: 100%; background: #c9a24a; width: 0; transition: width .3s ease;
+    }
+
+    .obr-form__auth-warn {
+      padding: 20px;
+      background: #f4f4f4;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      text-align: center;
+      color: #888;
+      font-size: 15px;
+    }
+    .obr-form__auth-warn a { color: #c9a24a; font-weight: 600; text-decoration: none; }
+    .obr-form__auth-warn a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link">Организации</a>
+      <a href="akty.html" class="site-header__link is-current">Обращения</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+  </header>
+
+  <main class="page">
+    <header class="page__head">
+      <h1 class="page__title">Новое обращение</h1>
+      <p class="page__subtitle">Заполните форму — обращение будет зарегистрировано в выбранной вкладке</p>
+    </header>
+
+    <div class="obr-form-wrap">
+      <div id="authWarn" class="obr-form__auth-warn" style="display:none;">
+        <a href="login.html">Войдите в аккаунт</a>, чтобы отправить обращение
+      </div>
+
+      <form class="obr-form" id="obrForm" style="display:none;">
+        <div class="obr-form__target">
+          <div class="obr-form__target-logo">
+            <img src="" alt="" id="targetLogo">
+          </div>
+          <div class="obr-form__target-info">
+            <div class="obr-form__target-label">Обращение направляется в</div>
+            <div class="obr-form__target-name" id="targetName">Загрузка…</div>
+            <div style="font-size:12px;color:#999;margin-top:4px;" id="targetTab"></div>
+          </div>
+        </div>
+
+        <div class="obr-form__title-preview">
+          <div class="obr-form__title-preview-label">Автоматическое название</div>
+          <div class="obr-form__title-preview-text" id="titlePreview">Обращение №… в …</div>
+        </div>
+
+        <div class="obr-form__field">
+          <label class="obr-form__label" for="authorName">
+            Кто подаёт обращение <span class="obr-form__label-required">*</span>
+          </label>
+          <input class="obr-form__input" type="text" id="authorName"
+                 placeholder="Фамилия Имя Отчество" required>
+          <div class="obr-form__hint">Можно исправить, если нужно указать полное ФИО.</div>
+        </div>
+
+        <div class="obr-form__row">
+          <div class="obr-form__field">
+            <label class="obr-form__label" for="passport">
+              Серия и номер паспорта <span class="obr-form__label-required">*</span>
+            </label>
+            <input class="obr-form__input" type="text" id="passport"
+                   placeholder="0000 000000" maxlength="20" required>
+          </div>
+          <div class="obr-form__field">
+            <label class="obr-form__label" for="birthDate">
+              Дата рождения <span class="obr-form__label-required">*</span>
+            </label>
+            <input class="obr-form__input" type="date" id="birthDate" required>
+          </div>
+        </div>
+
+        <div class="obr-form__field">
+          <label class="obr-form__label" for="body">
+            Суть обращения <span class="obr-form__label-required">*</span>
+          </label>
+          <textarea class="obr-form__textarea" id="body"
+                    placeholder="Опишите подробно вашу ситуацию, просьбу или жалобу…"
+                    required></textarea>
+          <div class="obr-form__hint">
+            <span id="bodyCounter">0</span> / 5000 символов
+          </div>
+        </div>
+
+        <div class="obr-form__field">
+          <label class="obr-form__label" for="createdAtDisplay">Дата подачи обращения</label>
+          <input class="obr-form__input" type="text" id="createdAtDisplay" disabled>
+          <div class="obr-form__hint">Проставляется автоматически при отправке.</div>
+        </div>
+
+        <div class="obr-form__actions">
+          <button type="submit" class="obr-form__btn obr-form__btn--submit" id="submitBtn">
+            Отправить обращение
+          </button>
+          <a href="javascript:history.back()" class="obr-form__btn obr-form__btn--cancel">
+            Отмена
+          </a>
+        </div>
+
+        <div class="obr-form__progress" id="progress">
+          <div class="obr-form__progress-bar" id="progressBar"></div>
+        </div>
+        <div class="obr-form__message" id="message"></div>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="js/auth-header.js?v=23"></script>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      doc, getDoc, collection, query, where, getDocs,
+      addDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getClaims } from "./js/permissions.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.get('org');
+    const tabId = params.get('tab');
+
+    const authWarn = document.getElementById('authWarn');
+    const obrForm = document.getElementById('obrForm');
+    const targetLogo = document.getElementById('targetLogo');
+    const targetName = document.getElementById('targetName');
+    const targetTab = document.getElementById('targetTab');
+    const titlePreview = document.getElementById('titlePreview');
+    const authorNameInput = document.getElementById('authorName');
+    const passportInput = document.getElementById('passport');
+    const birthDateInput = document.getElementById('birthDate');
+    const bodyInput = document.getElementById('body');
+    const bodyCounter = document.getElementById('bodyCounter');
+    const createdAtDisplay = document.getElementById('createdAtDisplay');
+    const submitBtn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
+
+    let currentUser = null;
+    let currentClaims = { role: 'citizen', sections: [] };
+    let orgData = null;
+    let activeTab = null;
+    let nextNumber = 1;
+
+    const now = new Date();
+    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    createdAtDisplay.value = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear() +
+                             ', ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+    bodyInput.addEventListener('input', () => {
+      const len = bodyInput.value.length;
+      bodyCounter.textContent = len;
+      if (len > 5000) {
+        bodyInput.value = bodyInput.value.slice(0, 5000);
+        bodyCounter.textContent = 5000;
+      }
+    });
+
+    if (!orgId || !tabId) {
+      targetName.textContent = 'Не указана организация или вкладка';
+      authWarn.style.display = 'block';
+      authWarn.innerHTML = 'Ошибка: не указана организация или вкладка. <a href="akty.html">Вернитесь к списку</a>';
+    } else {
+      loadOrg();
+    }
+
+    async function loadOrg() {
+      try {
+        const snap = await getDoc(doc(db, 'organizations', orgId));
+        if (!snap.exists()) {
+          targetName.textContent = 'Организация не найдена';
+          authWarn.style.display = 'block';
+          authWarn.innerHTML = 'Организация не найдена. <a href="akty.html">Вернуться</a>';
+          return;
+        }
+        orgData = { id: orgId, ...snap.data() };
+        targetLogo.src = orgData.logoUrl || '';
+        targetLogo.alt = orgData.shortName || '';
+        targetName.textContent = orgData.name || orgData.shortName || '';
+
+        const tabs = Array.isArray(orgData.obrTabs) ? orgData.obrTabs : [];
+        activeTab = tabs.find(t => t.id === tabId);
+        if (!activeTab) {
+          targetTab.textContent = 'Вкладка не найдена';
+          authWarn.style.display = 'block';
+          authWarn.innerHTML = 'Вкладка не найдена или была удалена. <a href="obrashcheniya-org.html?id=' + orgId + '">Вернуться к организации</a>';
+          return;
+        }
+        targetTab.textContent = 'Вкладка: ' + activeTab.label;
+
+        await computeNextNumber();
+      } catch (e) {
+        console.error(e);
+        targetName.textContent = 'Ошибка загрузки';
+      }
+    }
+
+    async function computeNextNumber() {
+      try {
+        const q = query(
+          collection(db, 'obrashcheniya'),
+          where('orgId', '==', orgId),
+          where('orgTabId', '==', tabId)
+        );
+        const snap = await getDocs(q);
+        nextNumber = snap.size + 1;
+        updateTitlePreview();
+      } catch (e) {
+        console.warn('Не удалось посчитать номер обращения:', e);
+        nextNumber = 1;
+        updateTitlePreview();
+      }
+    }
+
+    function updateTitlePreview() {
+      const orgShort = orgData?.shortName || orgData?.name || 'организацию';
+      const num = String(nextNumber).padStart(3, '0');
+      titlePreview.textContent = 'Обращение №' + num + ' в ' + orgShort;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentUser = null;
+        authWarn.style.display = 'block';
+        obrForm.style.display = 'none';
+        return;
+      }
+      currentUser = user;
+      currentClaims = await getClaims(user);
+
+      authWarn.style.display = 'none';
+      obrForm.style.display = 'block';
+
+      const displayName = user.displayName || (user.email || '').split('@')[0] || '';
+      if (displayName && !authorNameInput.value) {
+        authorNameInput.value = displayName;
+      }
+    });
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = 'obr-form__message ' + (type === 'error' ? 'is-error' : 'is-success');
+    }
+
+    obrForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) { showMessage('Вы не авторизованы.', 'error'); return; }
+      if (!orgData || !activeTab) { showMessage('Организация или вкладка не найдена.', 'error'); return; }
+
+      const authorName = authorNameInput.value.trim();
+      const passport = passportInput.value.trim();
+      const birthDate = birthDateInput.value;
+      const body = bodyInput.value.trim();
+
+      if (!authorName || !passport || !birthDate || !body) {
+        showMessage('Заполните все поля.', 'error');
+        return;
+      }
+      if (body.length > 5000) {
+        showMessage('Суть обращения слишком длинная (макс. 5000 символов).', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
+      progress.classList.add('is-visible');
+      progressBar.style.width = '0%';
+
+      try {
+        await computeNextNumber();
+        progressBar.style.width = '40%';
+
+        const orgShort = orgData.shortName || orgData.name || 'организацию';
+        const num = String(nextNumber).padStart(3, '0');
+        const title = 'Обращение №' + num + ' в ' + orgShort;
+
+        const ref = await addDoc(collection(db, 'obrashcheniya'), {
+          title: title,
+          number: nextNumber,
+          orgId: orgId,
+          orgShortName: orgShort,
+          orgSection: orgData.section || '',
+          orgTabId: activeTab.id,
+          orgTabLabel: activeTab.label,
+          authorName: authorName,
+          passport: passport,
+          birthDate: birthDate,
+          body: body,
+          status: 'new',
+          authorUid: currentUser.uid,
+          authorEmail: currentUser.email || '',
+          authorRole: currentClaims.role,
+          createdAt: serverTimestamp()
+        });
+
+        progressBar.style.width = '100%';
+        showMessage('Обращение отправлено! Перенаправление…', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'obrashchenie.html?id=' + ref.id;
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        showMessage('Ошибка: ' + err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить обращение';
+        progress.classList.remove('is-visible');
+      }
+    });
+  </script>
+</body>
+</html>

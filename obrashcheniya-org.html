@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Обращения — Moscow RP</title>
+  <link rel="icon" type="image/png" href="ikon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://static.tildacdn.com">
+  <link rel="stylesheet" href="https://static.tildacdn.com/css/tilda-fonts-1.0.min.css">
+  <style>
+    .obr-org-head {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 24px 28px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .obr-org-logo {
+      width: 80px; height: 80px;
+      border-radius: 14px;
+      background: #f7f7f7;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .obr-org-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+    .obr-org-short {
+      font-size: 24px; font-weight: 800; color: #111;
+      margin: 0 0 4px; letter-spacing: 0.01em; text-transform: uppercase;
+    }
+    .obr-org-name { font-size: 14px; color: #666; margin: 0; }
+
+    /* Вкладки */
+    .obr-tabs-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 22px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .obr-tab {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: color .15s ease, border-color .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .obr-tab:hover { color: #111; }
+    .obr-tab.is-active { color: #c9302c; border-bottom-color: #c9302c; }
+
+    .obr-tab__edit-btn {
+      margin-left: 4px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      padding: 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .obr-tab__edit-btn:hover { color: #c9302c; }
+
+    .obr-tabs-add {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #c9302c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: background .15s ease;
+    }
+    .obr-tabs-add:hover { background: #a82822; }
+
+    .obr-tabs-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: #888;
+      font-size: 15px;
+      background: #fafafa;
+      border: 1px dashed #e0e0e0;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .obr-tabs-empty__title { font-size: 17px; font-weight: 700; color: #333; margin-bottom: 8px; }
+
+    .obr-login-hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: #f4f4f4;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .obr-login-hint svg { flex-shrink: 0; color: #999; }
+    .obr-login-hint a { color: #c9a24a; text-decoration: none; font-weight: 600; }
+    .obr-login-hint a:hover { text-decoration: underline; }
+
+    .obr-new-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #c9302c;
+      color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      margin-bottom: 20px;
+    }
+    .obr-new-btn:hover { background: #a82822; }
+
+    .obr-list { list-style: none; margin: 0; padding: 0; }
+    .obr-item { padding: 22px 0; border-bottom: 1px solid #eee; position: relative; }
+    .obr-item:first-child { padding-top: 0; }
+    .obr-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .obr-item__link { display: block; color: inherit; text-decoration: none; padding-right: 44px; transition: opacity .15s ease; }
+    .obr-item__link:hover { opacity: 0.75; }
+    .obr-item__title { font-size: 19px; font-weight: 700; color: #111; margin: 0 0 8px; line-height: 1.3; }
+    .obr-item__meta { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #666; margin: 0 0 8px; }
+    .obr-item__meta svg { color: #c9a24a; flex-shrink: 0; }
+    .obr-item__preview { font-size: 14px; color: #444; margin: 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .obr-item__status {
+      display: inline-block;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: .04em;
+      margin-left: 8px;
+    }
+    .obr-item__status--new { background: #fdecec; color: #b3261e; }
+    .obr-item__status--progress { background: #fff8e6; color: #a68a2d; }
+    .obr-item__status--answered { background: #eaf6ec; color: #1a6b31; }
+
+    .obr-empty { text-align: center; color: #999; padding: 60px 0; font-size: 15px; }
+
+    /* Модалки */
+    .obr-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .obr-modal.is-open { display: flex; }
+    .obr-modal__box {
+      background: #fff;
+      border-radius: 14px;
+      max-width: 480px;
+      width: 100%;
+      padding: 28px 26px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .obr-modal__close {
+      position: absolute; top: 12px; right: 12px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f4f4f4; border: none; color: #666;
+      cursor: pointer; font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .obr-modal__close:hover { background: #e8e8e8; }
+    .obr-modal__title { font-size: 18px; font-weight: 700; margin: 0 0 20px; color: #111; }
+    .obr-modal__field { margin-bottom: 18px; }
+    .obr-modal__label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .obr-modal__input {
+      width: 100%; padding: 11px 14px;
+      font-size: 15px; font-family: inherit;
+      border: 1.5px solid #d8d8d8; border-radius: 8px;
+      outline: none; box-sizing: border-box;
+    }
+    .obr-modal__input:focus { border-color: #c9a24a; }
+    .obr-modal__actions { display: flex; gap: 10px; margin-top: 20px; }
+    .obr-modal__btn {
+      flex: 1; padding: 12px;
+      font-size: 14px; font-weight: 600;
+      border: none; border-radius: 8px;
+      cursor: pointer; font-family: inherit;
+    }
+    .obr-modal__btn--save { background: #c9302c; color: #fff; }
+    .obr-modal__btn--save:hover { background: #a82822; }
+    .obr-modal__btn--save:disabled { opacity: .6; cursor: not-allowed; }
+    .obr-modal__btn--cancel { background: #f4f4f4; color: #555; }
+    .obr-modal__btn--cancel:hover { background: #e8e8e8; }
+    .obr-modal__btn--danger { background: #fdecec; color: #b3261e; }
+    .obr-modal__btn--danger:hover { background: #f8d7d7; }
+    .obr-modal__btn--danger:disabled { opacity: .5; cursor: not-allowed; }
+    .obr-modal__msg {
+      margin-top: 12px; padding: 10px 12px;
+      border-radius: 8px; font-size: 13px; display: none;
+    }
+    .obr-modal__msg.is-error { display: block; background: #fdecec; color: #b3261e; }
+    .obr-modal__msg.is-success { display: block; background: #eaf6ec; color: #1a6b31; }
+
+    @media (max-width: 640px) {
+      .obr-org-head { flex-direction: column; text-align: center; padding: 20px; }
+      .obr-org-short { font-size: 20px; }
+      .obr-tabs-wrap { flex-wrap: wrap; }
+      .obr-tabs-add { margin-left: 0; width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="site-header__menu">
+      <a href="fz.html" class="site-header__link">Федеральное законодательство</a>
+      <a href="gos.html" class="site-header__link">Государственное руководство</a>
+      <a href="organizations.html" class="site-header__link">Организации</a>
+      <a href="akty.html" class="site-header__link is-current">Обращения</a>
+    </nav>
+    <a href="index.html" class="site-header__title">Moscow RP</a>
+    <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:12px;z-index:20;">
+      <div id="authGuest" style="display:none;align-items:center;gap:8px;">
+        <a href="login.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#4a4a4a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span>Войти</span>
+        </a>
+        <a href="register.html" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9302c;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          <span>Регистрация</span>
+        </a>
+      </div>
+      <a id="authProfile" href="profile.html" style="display:none;align-items:center;gap:7px;padding:8px 14px;font-size:13px;font-weight:600;color:#fff;background:#c9a24a;border-radius:8px;text-decoration:none;white-space:nowrap;line-height:1;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="authProfileName">Профиль</span>
+        <span id="authProfileBadge" style="display:none;background:#fff;color:#c9a24a;font-size:10px;font-weight:800;letter-spacing:.02em;padding:3px 6px;border-radius:4px;">Правительство</span>
+      </a>
+      <a href="search.html" class="site-header__discord" title="Поиск" aria-label="Поиск">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </a>
+      <a href="https://discord.gg/Rw82hSQfhw" target="_blank" rel="noopener" class="site-header__discord" title="Discord" aria-label="Discord">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="obr-org-head" id="orgHead">
+      <div class="obr-org-logo">
+        <img src="" alt="" id="orgLogo">
+      </div>
+      <div>
+        <h1 class="obr-org-short" id="orgShort">Загрузка…</h1>
+        <p class="obr-org-name" id="orgName"></p>
+      </div>
+    </div>
+
+    <div id="tabsBar"></div>
+
+    <div id="loginHint" class="obr-login-hint" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span><a href="login.html">Войдите</a>, чтобы написать обращение</span>
+    </div>
+
+    <a href="#" id="newObrBtn" class="obr-new-btn" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Новое обращение
+    </a>
+
+    <ul class="obr-list" id="obrList">
+      <li class="obr-empty">Загрузка…</li>
+    </ul>
+  </main>
+
+  <!-- Модалка создания/редактирования вкладки -->
+  <div class="obr-modal" id="tabModal">
+    <div class="obr-modal__box">
+      <button class="obr-modal__close" type="button" id="modalClose">×</button>
+      <h3 class="obr-modal__title" id="modalTitle">Новая вкладка</h3>
+
+      <div class="obr-modal__field">
+        <label class="obr-modal__label" for="tabLabel">Название вкладки</label>
+        <input class="obr-modal__input" type="text" id="tabLabel" maxlength="60"
+               placeholder="Например: Жалобы на сотрудников">
+      </div>
+
+      <div class="obr-modal__actions">
+        <button type="button" class="obr-modal__btn obr-modal__btn--cancel" id="modalCancel">Отмена</button>
+        <button type="button" class="obr-modal__btn obr-modal__btn--danger" id="modalDelete" style="display:none;">Удалить</button>
+        <button type="button" class="obr-modal__btn obr-modal__btn--save" id="modalSave">Создать</button>
+      </div>
+      <div class="obr-modal__msg" id="modalMsg"></div>
+    </div>
+  </div>
+
+  <!-- Модалка подтверждения удаления вкладки -->
+  <div class="obr-modal" id="deleteModal">
+    <div class="obr-modal__box">
+      <button class="obr-modal__close" type="button" id="delClose">×</button>
+      <h3 class="obr-modal__title">Удалить вкладку?</h3>
+      <p style="font-size:14px;color:#555;line-height:1.6;margin:0 0 20px;">
+        Вкладка <strong id="delTabName">«…»</strong> будет удалена.<br>
+        <span id="delWarning" style="color:#b3261e;"></span>
+      </p>
+      <div class="obr-modal__actions">
+        <button type="button" class="obr-modal__btn obr-modal__btn--cancel" id="delCancel">Отмена</button>
+        <button type="button" class="obr-modal__btn obr-modal__btn--danger" id="delConfirm">Удалить</button>
+      </div>
+      <div class="obr-modal__msg" id="delMsg"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/auth-header.js?v=23"></script>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      doc, getDoc, updateDoc,
+      collection, query, where, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getClaims } from "./js/permissions.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.get('id');
+
+    const orgLogo = document.getElementById('orgLogo');
+    const orgShort = document.getElementById('orgShort');
+    const orgName = document.getElementById('orgName');
+    const tabsBar = document.getElementById('tabsBar');
+    const obrList = document.getElementById('obrList');
+    const loginHint = document.getElementById('loginHint');
+    const newObrBtn = document.getElementById('newObrBtn');
+
+    const tabModal = document.getElementById('tabModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalSave = document.getElementById('modalSave');
+    const modalDelete = document.getElementById('modalDelete');
+    const modalTitle = document.getElementById('modalTitle');
+    const tabLabel = document.getElementById('tabLabel');
+    const modalMsg = document.getElementById('modalMsg');
+
+    const deleteModal = document.getElementById('deleteModal');
+    const delClose = document.getElementById('delClose');
+    const delCancel = document.getElementById('delCancel');
+    const delConfirm = document.getElementById('delConfirm');
+    const delTabName = document.getElementById('delTabName');
+    const delWarning = document.getElementById('delWarning');
+    const delMsg = document.getElementById('delMsg');
+
+    let currentUser = null;
+    let currentClaims = { role: 'citizen', sections: [] };
+    let orgData = null;
+    let tabs = [];
+    let activeTabId = null;
+    let editingTabId = null;
+    let deletingTabId = null;
+
+    if (!orgId) {
+      orgShort.textContent = 'Организация не найдена';
+      obrList.innerHTML = '<li class="obr-empty">Вернитесь к <a href="akty.html">списку организаций</a>.</li>';
+    } else {
+      loadOrg();
+    }
+
+    function canManageTabs() {
+      const role = currentClaims.role || 'citizen';
+      return role === 'admin' || role === 'government';
+    }
+
+    async function loadOrg() {
+      try {
+        const snap = await getDoc(doc(db, 'organizations', orgId));
+        if (!snap.exists()) {
+          orgShort.textContent = 'Организация не найдена';
+          return;
+        }
+        orgData = { id: orgId, ...snap.data() };
+        orgLogo.src = orgData.logoUrl || '';
+        orgLogo.alt = orgData.shortName || '';
+        orgShort.textContent = orgData.shortName || orgData.name || '';
+        orgName.textContent = orgData.name || '';
+        document.title = 'Обращения — ' + (orgData.shortName || orgData.name || 'Организация');
+
+        tabs = Array.isArray(orgData.obrTabs) ? orgData.obrTabs.slice() : [];
+
+        const tabFromUrl = params.get('tab');
+        if (tabFromUrl && tabs.some(t => t.id === tabFromUrl)) {
+          activeTabId = tabFromUrl;
+        } else if (tabs.length) {
+          activeTabId = tabs[0].id;
+        } else {
+          activeTabId = null;
+        }
+
+        renderTabs();
+        renderHint();
+        await renderList();
+      } catch (e) {
+        console.error(e);
+        orgShort.textContent = 'Ошибка загрузки';
+      }
+    }
+
+    function renderTabs() {
+      if (!tabs.length) {
+        tabsBar.innerHTML = `
+          <div class="obr-tabs-empty">
+            <div class="obr-tabs-empty__title">Пока нет вкладок для обращений</div>
+            <div>Здесь появятся категории обращений, когда их создаст администратор.</div>
+            ${canManageTabs() ? `
+              <button type="button" class="obr-tabs-add" id="createFirstTab" style="margin: 20px auto 0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Создать первую вкладку
+              </button>
+            ` : ''}
+          </div>
+        `;
+        const cf = document.getElementById('createFirstTab');
+        if (cf) cf.onclick = () => openTabModal();
+        return;
+      }
+
+      tabsBar.innerHTML = `
+        <div class="obr-tabs-wrap" style="width:100%;">
+          ${tabs.map(t => `
+            <button class="obr-tab ${t.id === activeTabId ? 'is-active' : ''}" data-tab-id="${esc(t.id)}">
+              <span>${esc(t.label)}</span>
+              ${canManageTabs() ? `
+                <span class="obr-tab__edit-btn" data-edit-id="${esc(t.id)}" title="Переименовать / удалить">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                </span>
+              ` : ''}
+            </button>
+          `).join('')}
+          ${canManageTabs() ? `
+            <button type="button" class="obr-tabs-add" id="addTabBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Добавить вкладку
+            </button>
+          ` : ''}
+        </div>
+      `;
+
+      tabsBar.querySelectorAll('.obr-tab').forEach(btn => {
+        btn.onclick = (e) => {
+          if (e.target.closest('.obr-tab__edit-btn')) {
+            e.stopPropagation();
+            const editId = e.target.closest('.obr-tab__edit-btn').getAttribute('data-edit-id');
+            openTabModal(editId);
+            return;
+          }
+          const id = btn.getAttribute('data-tab-id');
+          if (id === activeTabId) return;
+          activeTabId = id;
+          const url = new URL(window.location);
+          url.searchParams.set('tab', id);
+          history.replaceState(null, '', url);
+          renderTabs();
+          renderHint();
+          renderList();
+        };
+      });
+
+      const addBtn = document.getElementById('addTabBtn');
+      if (addBtn) addBtn.onclick = () => openTabModal();
+    }
+
+    function renderHint() {
+      if (!tabs.length) {
+        loginHint.style.display = 'none';
+        newObrBtn.style.display = 'none';
+        return;
+      }
+      if (currentUser) {
+        loginHint.style.display = 'none';
+        newObrBtn.style.display = 'inline-flex';
+        newObrBtn.href = 'add-obrashchenie.html?org=' + orgId + '&tab=' + activeTabId;
+      } else {
+        loginHint.style.display = 'flex';
+        newObrBtn.style.display = 'none';
+      }
+    }
+
+    async function renderList() {
+      if (!tabs.length) {
+        obrList.innerHTML = '';
+        return;
+      }
+      const tab = tabs.find(t => t.id === activeTabId);
+      if (!tab) {
+        obrList.innerHTML = '<li class="obr-empty">Вкладка не найдена.</li>';
+        return;
+      }
+
+      obrList.innerHTML = '<li class="obr-empty">Загрузка…</li>';
+
+      try {
+        const q = query(
+          collection(db, 'obrashcheniya'),
+          where('orgId', '==', orgId),
+          where('orgTabId', '==', activeTabId)
+        );
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          obrList.innerHTML = '<li class="obr-empty">Пока нет обращений в эту вкладку.</li>';
+          return;
+        }
+
+        const items = [];
+        snap.forEach(d => items.push({ id: d.id, data: d.data() }));
+        items.sort((a, b) => (b.data.createdAt?.toMillis?.() || 0) - (a.data.createdAt?.toMillis?.() || 0));
+
+        obrList.innerHTML = items.map(renderItem).join('');
+      } catch (e) {
+        console.error(e);
+        obrList.innerHTML = '<li class="obr-empty" style="color:#b3261e;">Ошибка загрузки обращений.</li>';
+      }
+    }
+
+    function renderItem(item) {
+      const d = item.data;
+
+      let statusHtml = '';
+      if (d.status === 'progress') {
+        statusHtml = '<span class="obr-item__status obr-item__status--progress">В работе</span>';
+      } else if (d.status === 'answered') {
+        statusHtml = '<span class="obr-item__status obr-item__status--answered">Отвечено</span>';
+      } else {
+        statusHtml = '<span class="obr-item__status obr-item__status--new">Новое</span>';
+      }
+
+      const bodyPreview = (d.body || '').slice(0, 200);
+      return `
+        <li class="obr-item">
+          <a class="obr-item__link" href="obrashchenie.html?id=${item.id}">
+            <h2 class="obr-item__title">${esc(d.title || 'Обращение')} ${statusHtml}</h2>
+            <p class="obr-item__meta">
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M3 0h6l3 3v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5 1v3h3L8 1z"/></svg>
+              <span>${formatDate(d.createdAt)} · ${esc(d.authorName || 'Гражданин')}</span>
+            </p>
+            ${bodyPreview ? `<p class="obr-item__preview">${esc(bodyPreview)}${(d.body || '').length > 200 ? '…' : ''}</p>` : ''}
+          </a>
+        </li>`;
+    }
+
+    // ============================================================
+    // Модалка: создание/редактирование вкладки
+    // ============================================================
+    function openTabModal(editId = null) {
+      editingTabId = editId;
+      modalMsg.className = 'obr-modal__msg';
+      modalMsg.textContent = '';
+
+      if (editId) {
+        const t = tabs.find(x => x.id === editId);
+        modalTitle.textContent = 'Редактировать вкладку';
+        tabLabel.value = t ? t.label : '';
+        modalSave.textContent = 'Сохранить';
+        modalDelete.style.display = 'inline-flex';
+      } else {
+        modalTitle.textContent = 'Новая вкладка';
+        tabLabel.value = '';
+        modalSave.textContent = 'Создать';
+        modalDelete.style.display = 'none';
+      }
+
+      tabModal.classList.add('is-open');
+      tabLabel.focus();
+    }
+
+    function closeTabModal() {
+      tabModal.classList.remove('is-open');
+      editingTabId = null;
+      tabLabel.value = '';
+    }
+
+    modalClose.onclick = closeTabModal;
+    modalCancel.onclick = closeTabModal;
+    tabModal.addEventListener('click', (e) => { if (e.target === tabModal) closeTabModal(); });
+
+    modalSave.onclick = async () => {
+      if (!canManageTabs()) {
+        modalMsg.textContent = 'Недостаточно прав.';
+        modalMsg.className = 'obr-modal__msg is-error';
+        return;
+      }
+      const label = tabLabel.value.trim();
+      if (!label) {
+        modalMsg.textContent = 'Введите название вкладки.';
+        modalMsg.className = 'obr-modal__msg is-error';
+        return;
+      }
+
+      modalSave.disabled = true;
+      const originalText = modalSave.textContent;
+      modalSave.textContent = 'Сохранение...';
+
+      try {
+        let newTabs;
+
+        if (editingTabId) {
+          newTabs = tabs.map(t => t.id === editingTabId ? { ...t, label } : t);
+        } else {
+          const newId = 'tab_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+          newTabs = [...tabs, { id: newId, label }];
+          activeTabId = newId;
+        }
+
+        await updateDoc(doc(db, 'organizations', orgId), { obrTabs: newTabs });
+        tabs = newTabs;
+
+        modalMsg.textContent = 'Сохранено!';
+        modalMsg.className = 'obr-modal__msg is-success';
+
+        setTimeout(() => {
+          closeTabModal();
+          renderTabs();
+          renderHint();
+          renderList();
+        }, 500);
+      } catch (e) {
+        console.error(e);
+        modalMsg.textContent = 'Ошибка: ' + e.message;
+        modalMsg.className = 'obr-modal__msg is-error';
+      } finally {
+        modalSave.disabled = false;
+        modalSave.textContent = originalText;
+      }
+    };
+
+    // Кнопка «Удалить» в модалке редактирования
+    modalDelete.onclick = () => {
+      if (!editingTabId) return;
+      const tabToDelete = editingTabId;
+      closeTabModal();
+      openDeleteModal(tabToDelete);
+    };
+
+    // ============================================================
+    // Модалка: удаление вкладки
+    // ============================================================
+    async function openDeleteModal(tabId) {
+      deletingTabId = tabId;
+      const t = tabs.find(x => x.id === tabId);
+      delTabName.textContent = '«' + (t ? t.label : '') + '»';
+      delMsg.className = 'obr-modal__msg';
+      delMsg.textContent = '';
+
+      try {
+        const q = query(
+          collection(db, 'obrashcheniya'),
+          where('orgId', '==', orgId),
+          where('orgTabId', '==', tabId)
+        );
+        const snap = await getDocs(q);
+        if (snap.size > 0) {
+          delWarning.textContent = 'Внимание: в этой вкладке ' + snap.size + ' обращени' + plural(snap.size, 'е', 'я', 'й') + '. Их нужно сначала удалить или перенести.';
+          delConfirm.disabled = true;
+          delConfirm.style.opacity = '0.5';
+          delConfirm.style.cursor = 'not-allowed';
+        } else {
+          delWarning.textContent = '';
+          delConfirm.disabled = false;
+          delConfirm.style.opacity = '1';
+          delConfirm.style.cursor = 'pointer';
+        }
+      } catch (e) {
+        delWarning.textContent = '';
+      }
+
+      deleteModal.classList.add('is-open');
+    }
+
+    function closeDeleteModal() {
+      deleteModal.classList.remove('is-open');
+      deletingTabId = null;
+    }
+
+    delClose.onclick = closeDeleteModal;
+    delCancel.onclick = closeDeleteModal;
+    deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) closeDeleteModal(); });
+
+    delConfirm.onclick = async () => {
+      if (!deletingTabId || !canManageTabs()) return;
+
+      delConfirm.disabled = true;
+      const orig = delConfirm.textContent;
+      delConfirm.textContent = 'Удаление...';
+
+      try {
+        const newTabs = tabs.filter(t => t.id !== deletingTabId);
+        await updateDoc(doc(db, 'organizations', orgId), { obrTabs: newTabs });
+        tabs = newTabs;
+
+        if (activeTabId === deletingTabId) {
+          activeTabId = tabs.length ? tabs[0].id : null;
+        }
+
+        delMsg.textContent = 'Вкладка удалена';
+        delMsg.className = 'obr-modal__msg is-success';
+
+        setTimeout(() => {
+          closeDeleteModal();
+          renderTabs();
+          renderHint();
+          renderList();
+        }, 500);
+      } catch (e) {
+        delMsg.textContent = 'Ошибка: ' + e.message;
+        delMsg.className = 'obr-modal__msg is-error';
+      } finally {
+        delConfirm.disabled = false;
+        delConfirm.textContent = orig;
+      }
+    };
+
+    // ============================================================
+    // Утилиты
+    // ============================================================
+    function plural(n, one, few, many) {
+      const m10 = n % 10, m100 = n % 100;
+      if (m10 === 1 && m100 !== 11) return one;
+      if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+      return many;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear() + ', ' + hh + ':' + mm;
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        currentClaims = await getClaims(user);
+      } else {
+        currentClaims = { role: 'citizen', sections: [] };
+      }
+      if (orgData) {
+        renderTabs();
+        renderHint();
+        renderList();
+      }
+    });
+  </script>
+</body>
+</html>
