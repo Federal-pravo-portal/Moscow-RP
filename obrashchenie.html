@@ -98,6 +98,8 @@
     }
     .obr-view__btn--ghost { background: #f4f4f4; color: #333; }
     .obr-view__btn--ghost:hover { background: #e8e8e8; }
+    .obr-view__btn--primary { background: #1a6b31; color: #fff; }
+    .obr-view__btn--primary:hover { background: #145226; }
     .obr-view__btn--danger { background: #fdecec; color: #b3261e; }
     .obr-view__btn--danger:hover { background: #f8d7d7; }
 
@@ -110,9 +112,10 @@
       margin-bottom: 12px;
     }
 
+    /* Ответ организации */
     .obr-view__reply {
       margin-top: 24px;
-      padding: 20px 24px;
+      padding: 22px 26px;
       background: #eaf6ec;
       border-left: 3px solid #1a6b31;
       border-radius: 6px;
@@ -120,11 +123,158 @@
     .obr-view__reply-label {
       font-size: 11px; font-weight: 700; color: #1a6b31;
       text-transform: uppercase; letter-spacing: 0.06em;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
+    .obr-view__reply-actions {
+      display: inline-flex;
+      gap: 6px;
+    }
+    .obr-view__reply-actions button {
+      background: transparent;
+      border: none;
+      color: #1a6b31;
+      cursor: pointer;
+      padding: 2px 4px;
+      font-size: 12px;
+      font-family: inherit;
+      text-decoration: underline;
+      opacity: 0.75;
+    }
+    .obr-view__reply-actions button:hover { opacity: 1; }
     .obr-view__reply-body {
       font-size: 15px; color: #111; line-height: 1.6;
       white-space: pre-wrap;
+    }
+    .obr-view__reply-image {
+      margin-top: 14px;
+      max-width: 100%;
+      max-height: 420px;
+      border-radius: 8px;
+      border: 1px solid rgba(26,107,49,0.2);
+      display: block;
+    }
+
+    /* Модалка ответа */
+    .obr-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .obr-modal.is-open { display: flex; }
+    .obr-modal__box {
+      background: #fff;
+      border-radius: 14px;
+      max-width: 560px;
+      width: 100%;
+      padding: 28px 26px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .obr-modal__close {
+      position: absolute; top: 12px; right: 12px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f4f4f4; border: none; color: #666;
+      cursor: pointer; font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .obr-modal__close:hover { background: #e8e8e8; }
+    .obr-modal__title { font-size: 18px; font-weight: 700; margin: 0 0 20px; color: #111; }
+
+    .obr-modal__field { margin-bottom: 18px; }
+    .obr-modal__label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: #555; margin-bottom: 8px;
+    }
+    .obr-modal__textarea {
+      width: 100%; padding: 12px 14px;
+      font-size: 15px; font-family: inherit;
+      border: 1.5px solid #d8d8d8; border-radius: 8px;
+      outline: none; box-sizing: border-box;
+      min-height: 140px; resize: vertical;
+      line-height: 1.55;
+    }
+    .obr-modal__textarea:focus { border-color: #1a6b31; }
+
+    .obr-modal__file {
+      display: block;
+      width: 100%;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1.5px dashed #c9a24a;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .obr-modal__file::-webkit-file-upload-button {
+      background: #c9a24a;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-right: 12px;
+    }
+    .obr-modal__file-preview {
+      margin-top: 12px;
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      display: none;
+    }
+    .obr-modal__file-preview.is-visible { display: block; }
+    .obr-modal__file-remove {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #b3261e;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      font-family: inherit;
+      display: none;
+    }
+    .obr-modal__file-remove.is-visible { display: inline-block; }
+
+    .obr-modal__actions { display: flex; gap: 10px; margin-top: 20px; }
+    .obr-modal__btn {
+      flex: 1; padding: 12px;
+      font-size: 14px; font-weight: 600;
+      border: none; border-radius: 8px;
+      cursor: pointer; font-family: inherit;
+    }
+    .obr-modal__btn--save { background: #1a6b31; color: #fff; }
+    .obr-modal__btn--save:hover { background: #145226; }
+    .obr-modal__btn--save:disabled { opacity: .6; cursor: not-allowed; }
+    .obr-modal__btn--cancel { background: #f4f4f4; color: #555; }
+    .obr-modal__btn--cancel:hover { background: #e8e8e8; }
+
+    .obr-modal__msg {
+      margin-top: 12px; padding: 10px 12px;
+      border-radius: 8px; font-size: 13px; display: none;
+    }
+    .obr-modal__msg.is-error { display: block; background: #fdecec; color: #b3261e; }
+    .obr-modal__msg.is-success { display: block; background: #eaf6ec; color: #1a6b31; }
+
+    .obr-modal__progress {
+      margin-top: 10px; height: 6px; background: #eee;
+      border-radius: 4px; overflow: hidden; display: none;
+    }
+    .obr-modal__progress.is-visible { display: block; }
+    .obr-modal__progress-bar {
+      height: 100%; background: #1a6b31; width: 0; transition: width .3s ease;
     }
   </style>
 </head>
@@ -169,6 +319,37 @@
     </div>
   </main>
 
+  <!-- Модалка ответа -->
+  <div class="obr-modal" id="replyModal">
+    <div class="obr-modal__box">
+      <button class="obr-modal__close" type="button" id="replyClose">×</button>
+      <h3 class="obr-modal__title" id="replyModalTitle">Ответ на обращение</h3>
+
+      <div class="obr-modal__field">
+        <label class="obr-modal__label" for="replyText">Текст ответа</label>
+        <textarea class="obr-modal__textarea" id="replyText"
+                  placeholder="Введите текст официального ответа…"></textarea>
+      </div>
+
+      <div class="obr-modal__field">
+        <label class="obr-modal__label" for="replyImage">Изображение (необязательно)</label>
+        <input class="obr-modal__file" type="file" id="replyImage" accept="image/*">
+        <img class="obr-modal__file-preview" id="replyPreview" alt="Предпросмотр">
+        <button type="button" class="obr-modal__file-remove" id="replyRemoveImage">Убрать изображение</button>
+      </div>
+
+      <div class="obr-modal__actions">
+        <button type="button" class="obr-modal__btn obr-modal__btn--cancel" id="replyCancel">Отмена</button>
+        <button type="button" class="obr-modal__btn obr-modal__btn--save" id="replySave">Отправить ответ</button>
+      </div>
+
+      <div class="obr-modal__progress" id="replyProgress">
+        <div class="obr-modal__progress-bar" id="replyProgressBar"></div>
+      </div>
+      <div class="obr-modal__msg" id="replyMsg"></div>
+    </div>
+  </div>
+
   <script type="module" src="js/auth-header.js?v=23"></script>
 
   <script type="module">
@@ -177,14 +358,32 @@
     import { doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getClaims, canEdit } from "./js/permissions.js";
 
+    const CLOUDINARY_CLOUD_NAME = "uykb5ubk";
+    const CLOUDINARY_UPLOAD_PRESET = "moscow_rp_uploads";
+
     const params = new URLSearchParams(window.location.search);
     const obrId = params.get('id');
 
     const obrView = document.getElementById('obrView');
 
+    const replyModal = document.getElementById('replyModal');
+    const replyClose = document.getElementById('replyClose');
+    const replyCancel = document.getElementById('replyCancel');
+    const replySave = document.getElementById('replySave');
+    const replyModalTitle = document.getElementById('replyModalTitle');
+    const replyText = document.getElementById('replyText');
+    const replyImage = document.getElementById('replyImage');
+    const replyPreview = document.getElementById('replyPreview');
+    const replyRemoveImage = document.getElementById('replyRemoveImage');
+    const replyMsg = document.getElementById('replyMsg');
+    const replyProgress = document.getElementById('replyProgress');
+    const replyProgressBar = document.getElementById('replyProgressBar');
+
     let currentUser = null;
     let currentClaims = { role: 'citizen', sections: [] };
     let obrData = null;
+    let pendingReplyFile = null;
+    let editingReply = false;   // true — редактируем существующий ответ
 
     if (!obrId) {
       obrView.innerHTML = '<div class="obr-view__empty"><div class="obr-view__empty-title">Обращение не найдено</div>Вернитесь к <a href="akty.html">списку организаций</a>.</div>';
@@ -219,15 +418,12 @@
         statusHtml = '<span class="obr-view__status obr-view__status--new">Новое</span>';
       }
 
-      // Кто может менять статус / отвечать / удалять
       const canManage = currentClaims.role === 'admin'
         || currentClaims.role === 'government'
         || (d.orgSection ? canEdit(d.orgSection, currentClaims) : false);
 
-      // Ссылка на вкладку организации
       const backHref = 'obrashcheniya-org.html?id=' + esc(d.orgId || '') + (d.orgTabId ? '&tab=' + esc(d.orgTabId) : '');
 
-      // Блок вкладки
       const tabBlock = d.orgTabLabel
         ? `<div class="obr-view__value obr-view__value--tab">
              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
@@ -235,12 +431,41 @@
            </div>`
         : '';
 
-      const replyHtml = d.reply && d.reply.trim()
-        ? `<div class="obr-view__reply">
-             <div class="obr-view__reply-label">Ответ организации</div>
-             <div class="obr-view__reply-body">${esc(d.reply)}</div>
-           </div>`
-        : '';
+      // Ответ организации
+      let replyHtml = '';
+      if (d.reply && d.reply.trim()) {
+        replyHtml = `
+          <div class="obr-view__reply">
+            <div class="obr-view__reply-label">
+              <span>Ответ организации</span>
+              ${canManage ? `
+                <span class="obr-view__reply-actions">
+                  <button type="button" id="editReplyBtn">Редактировать</button>
+                  <button type="button" id="deleteReplyBtn">Удалить</button>
+                </span>
+              ` : ''}
+            </div>
+            <div class="obr-view__reply-body">${esc(d.reply)}</div>
+            ${d.replyImageUrl ? `<img class="obr-view__reply-image" src="${esc(d.replyImageUrl)}" alt="Изображение ответа">` : ''}
+          </div>
+        `;
+      } else if (d.replyImageUrl) {
+        // На случай, если текст пустой, но есть только картинка
+        replyHtml = `
+          <div class="obr-view__reply">
+            <div class="obr-view__reply-label">
+              <span>Ответ организации</span>
+              ${canManage ? `
+                <span class="obr-view__reply-actions">
+                  <button type="button" id="editReplyBtn">Редактировать</button>
+                  <button type="button" id="deleteReplyBtn">Удалить</button>
+                </span>
+              ` : ''}
+            </div>
+            <img class="obr-view__reply-image" src="${esc(d.replyImageUrl)}" alt="Изображение ответа">
+          </div>
+        `;
+      }
 
       obrView.innerHTML = `
         <a href="${backHref}" class="obr-view__back">← Вернуться к организации</a>
@@ -290,9 +515,11 @@
               <button type="button" class="obr-view__btn obr-view__btn--ghost" id="statusBtn">
                 Изменить статус
               </button>
-              <button type="button" class="obr-view__btn obr-view__btn--ghost" id="replyBtn">
-                Ответить
-              </button>
+              ${!d.reply && !d.replyImageUrl ? `
+                <button type="button" class="obr-view__btn obr-view__btn--primary" id="replyBtn">
+                  Ответить
+                </button>
+              ` : ''}
               <button type="button" class="obr-view__btn obr-view__btn--danger" id="deleteBtn">
                 Удалить
               </button>
@@ -301,9 +528,12 @@
         </div>
       `;
 
+      // Привязка
       const statusBtn = document.getElementById('statusBtn');
       const replyBtn = document.getElementById('replyBtn');
       const deleteBtn = document.getElementById('deleteBtn');
+      const editReplyBtn = document.getElementById('editReplyBtn');
+      const deleteReplyBtn = document.getElementById('deleteReplyBtn');
 
       if (statusBtn) {
         statusBtn.onclick = async () => {
@@ -326,16 +556,25 @@
       }
 
       if (replyBtn) {
-        replyBtn.onclick = async () => {
-          const reply = prompt('Введите текст ответа организации:', d.reply || '');
-          if (reply === null) return;
+        replyBtn.onclick = () => openReplyModal(false);
+      }
+
+      if (editReplyBtn) {
+        editReplyBtn.onclick = () => openReplyModal(true);
+      }
+
+      if (deleteReplyBtn) {
+        deleteReplyBtn.onclick = async () => {
+          if (!confirm('Удалить ответ организации? Обращение останется без ответа.')) return;
           await updateDoc(doc(db, 'obrashcheniya', obrId), {
-            reply: reply,
-            repliedAt: new Date(),
-            status: 'answered'
+            reply: '',
+            replyImageUrl: '',
+            repliedAt: null,
+            status: 'progress'
           });
-          obrData.reply = reply;
-          obrData.status = 'answered';
+          obrData.reply = '';
+          obrData.replyImageUrl = '';
+          obrData.status = 'progress';
           render();
         };
       }
@@ -351,6 +590,152 @@
       }
     }
 
+    // ============================================================
+    // Модалка ответа
+    // ============================================================
+    function openReplyModal(isEdit = false) {
+      editingReply = isEdit;
+      pendingReplyFile = null;
+      replyImage.value = '';
+      replyPreview.classList.remove('is-visible');
+      replyPreview.src = '';
+      replyRemoveImage.classList.remove('is-visible');
+      replyMsg.className = 'obr-modal__msg';
+      replyMsg.textContent = '';
+      replyProgress.classList.remove('is-visible');
+      replyProgressBar.style.width = '0%';
+
+      if (isEdit && obrData) {
+        replyModalTitle.textContent = 'Редактировать ответ';
+        replyText.value = obrData.reply || '';
+        if (obrData.replyImageUrl) {
+          replyPreview.src = obrData.replyImageUrl;
+          replyPreview.classList.add('is-visible');
+          replyRemoveImage.classList.add('is-visible');
+        }
+      } else {
+        replyModalTitle.textContent = 'Ответ на обращение';
+        replyText.value = '';
+      }
+
+      replyModal.classList.add('is-open');
+      replyText.focus();
+    }
+
+    function closeReplyModal() {
+      replyModal.classList.remove('is-open');
+      editingReply = false;
+      pendingReplyFile = null;
+      replyText.value = '';
+      replyImage.value = '';
+      replyPreview.src = '';
+      replyPreview.classList.remove('is-visible');
+      replyRemoveImage.classList.remove('is-visible');
+    }
+
+    replyClose.onclick = closeReplyModal;
+    replyCancel.onclick = closeReplyModal;
+    replyModal.addEventListener('click', (e) => { if (e.target === replyModal) closeReplyModal(); });
+
+    replyImage.addEventListener('change', () => {
+      const file = replyImage.files[0];
+      if (!file) return;
+      pendingReplyFile = file;
+      replyPreview.src = URL.createObjectURL(file);
+      replyPreview.classList.add('is-visible');
+      replyRemoveImage.classList.add('is-visible');
+    });
+
+    replyRemoveImage.onclick = () => {
+      pendingReplyFile = null;
+      replyImage.value = '';
+      replyPreview.src = '';
+      replyPreview.classList.remove('is-visible');
+      replyRemoveImage.classList.remove('is-visible');
+      // Помечаем, что картинку нужно удалить
+      if (editingReply && obrData?.replyImageUrl) {
+        obrData._removeImage = true;
+      }
+    };
+
+    replySave.onclick = async () => {
+      const text = replyText.value.trim();
+      const hasFile = !!pendingReplyFile;
+      const hasExistingImage = editingReply ? !!obrData?.replyImageUrl : false;
+      const removeImage = !!obrData?._removeImage;
+
+      if (!text && !hasFile && !(hasExistingImage && !removeImage)) {
+        replyMsg.textContent = 'Введите текст ответа или приложите изображение.';
+        replyMsg.className = 'obr-modal__msg is-error';
+        return;
+      }
+
+      replySave.disabled = true;
+      replySave.textContent = 'Отправка...';
+      replyProgress.classList.add('is-visible');
+
+      try {
+        let imageUrl = editingReply ? (obrData.replyImageUrl || '') : '';
+
+        // Если пометили на удаление
+        if (removeImage) imageUrl = '';
+
+        // Если загрузили новый файл — грузим в Cloudinary
+        if (hasFile) {
+          replyProgressBar.style.width = '30%';
+          const fd = new FormData();
+          fd.append('file', pendingReplyFile);
+          fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+          const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/upload', {
+            method: 'POST',
+            body: fd
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error((err.error && err.error.message) || 'Ошибка загрузки в Cloudinary');
+          }
+          const data = await res.json();
+          imageUrl = data.secure_url;
+          replyProgressBar.style.width = '80%';
+        }
+
+        await updateDoc(doc(db, 'obrashcheniya', obrId), {
+          reply: text,
+          replyImageUrl: imageUrl,
+          repliedAt: new Date(),
+          status: 'answered'
+        });
+
+        // Обновляем локально
+        obrData.reply = text;
+        obrData.replyImageUrl = imageUrl;
+        obrData.status = 'answered';
+        delete obrData._removeImage;
+
+        replyProgressBar.style.width = '100%';
+        replyMsg.textContent = 'Ответ сохранён!';
+        replyMsg.className = 'obr-modal__msg is-success';
+
+        setTimeout(() => {
+          closeReplyModal();
+          render();
+        }, 600);
+
+      } catch (e) {
+        console.error(e);
+        replyMsg.textContent = 'Ошибка: ' + e.message;
+        replyMsg.className = 'obr-modal__msg is-error';
+      } finally {
+        replySave.disabled = false;
+        replySave.textContent = editingReply ? 'Сохранить' : 'Отправить ответ';
+        replyProgress.classList.remove('is-visible');
+      }
+    };
+
+    // ============================================================
+    // Утилиты
+    // ============================================================
     function formatDate(ts) {
       if (!ts) return '—';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
