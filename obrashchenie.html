@@ -535,7 +535,7 @@
     let obrData = null;
 
     let pendingReplyFile = null;
-    let editingReplyIndex = -1;   // -1 — новый ответ, иначе индекс в массиве replies
+    let editingReplyIndex = -1;
     let pendingStatus = null;
 
     const STATUS_LABELS = {
@@ -597,7 +597,6 @@
     function render() {
       const d = obrData;
 
-      // Статус
       const statusKey = d.status || 'pending';
       const statusLabel = STATUS_LABELS[statusKey] || 'На рассмотрении';
       const statusClass = 'obr-status obr-status--' + statusKey;
@@ -620,8 +619,11 @@
         ? replies.map((r, i) => renderReply(r, i, canManage, author)).join('')
         : `<div style="text-align:center;color:#999;padding:30px 20px;background:#fafafa;border:1px dashed #e0e0e0;border-radius:10px;font-size:14px;">Пока нет ответов. Будьте первым, кто напишет.</div>`;
 
-      // Кнопка ответа: показываем, если (сотрудник) ИЛИ (автор) И (статус != closed/rejected)
+      // Кнопка ответа
       const canReply = (canManage || author) && statusKey !== 'closed' && statusKey !== 'rejected';
+
+      // Определяем — это иск или обычное обращение
+      const isLawsuit = d.type === 'lawsuit';
 
       obrView.innerHTML = `
         <a href="${backHref}" class="obr-view__back">← Вернуться к организации</a>
@@ -661,10 +663,31 @@
             </div>
           ` : ''}
 
-          <div class="obr-view__section">
-            <div class="obr-view__label">Суть обращения</div>
-            <div class="obr-view__body">${esc(d.body || '')}</div>
-          </div>
+          ${isLawsuit ? `
+            <div class="obr-view__section">
+              <div class="obr-view__label">Кем подаётся иск</div>
+              <div class="obr-view__value">
+                ${d.filerType === 'prosecutor'
+                  ? 'Представитель прокуратуры: <strong>' + esc(d.filerName || '—') + '</strong>'
+                  : 'Гражданин: <strong>' + esc(d.filerName || '—') + '</strong>'}
+              </div>
+            </div>
+
+            <div class="obr-view__section">
+              <div class="obr-view__label">Изложение обстоятельств дела</div>
+              <div class="obr-view__body">${esc(d.bodyText || d.body || '')}</div>
+            </div>
+
+            <div class="obr-view__section">
+              <div class="obr-view__label">На основании вышеизложенного требую</div>
+              <div class="obr-view__body">${esc(d.demands || '')}</div>
+            </div>
+          ` : `
+            <div class="obr-view__section">
+              <div class="obr-view__label">Суть обращения</div>
+              <div class="obr-view__body">${esc(d.body || '')}</div>
+            </div>
+          `}
 
           <div class="obr-view__footer">
             <a href="akty.html" class="obr-view__btn obr-view__btn--ghost">← К списку организаций</a>
@@ -731,7 +754,6 @@
     }
 
     function renderReply(r, idx, canManage, author) {
-      // Определяем тип и цвет
       let typeClass = 'obr-reply--official';
       let badgeClass = 'obr-reply__badge--official';
       let badgeText = 'Организация';
@@ -746,10 +768,6 @@
         badgeText = 'Администратор';
       }
 
-      // Кто может править/удалять конкретно этот ответ:
-      // - автор ответа
-      // - admin/government (везде)
-      // - сотрудник организации (в ответах организации)
       const canEditThis = (r.authorUid && r.authorUid === currentUser?.uid)
         || currentClaims.role === 'admin'
         || currentClaims.role === 'government'
@@ -780,9 +798,6 @@
       `;
     }
 
-    // ============================================================
-    // Модалка ответа
-    // ============================================================
     function openReplyModal(idx = -1) {
       editingReplyIndex = idx;
       pendingReplyFile = null;
@@ -796,7 +811,6 @@
       replyProgressBar.style.width = '0%';
 
       if (idx >= 0) {
-        // редактирование
         const r = obrData.replies[idx];
         replyModalTitle.textContent = 'Редактировать ответ';
         replyText.value = r?.text || '';
@@ -825,7 +839,6 @@
       replyPreview.src = '';
       replyPreview.classList.remove('is-visible');
       replyRemoveImage.classList.remove('is-visible');
-      // Сбрасываем флаг удаления картинки
       if (obrData) delete obrData._removeReplyImage;
     }
 
@@ -895,13 +908,11 @@
           replyProgressBar.style.width = '80%';
         }
 
-        // Определяем, кто пишет
         const isOfficialReply = canManageObr() && !isAuthor();
         const authorName = isOfficialReply
           ? (obrData.orgShortName || 'Организация')
           : (currentUser.displayName || (currentUser.email || '').split('@')[0] || 'Автор');
 
-        // Копируем массив
         const newReplies = Array.isArray(obrData.replies) ? [...obrData.replies] : [];
 
         if (isEditing) {
@@ -924,10 +935,8 @@
           });
         }
 
-        // Обновляем документ
         const updates = { replies: newReplies };
 
-        // Если это первый ответ организации и статус ещё pending — переводим в progress
         const currentStatus = obrData.status || 'pending';
         if (!isEditing && isOfficialReply && currentStatus === 'pending') {
           updates.status = 'progress';
@@ -968,15 +977,11 @@
       render();
     }
 
-    // ============================================================
-    // Модалка статуса
-    // ============================================================
     function openStatusModal() {
       pendingStatus = obrData.status || 'pending';
       statusMsg.className = 'obr-modal__msg';
       statusMsg.textContent = '';
 
-      // Подсветить активный
       statusModal.querySelectorAll('.obr-status-option').forEach(btn => {
         btn.classList.toggle('is-active', btn.getAttribute('data-status') === pendingStatus);
       });
@@ -1025,9 +1030,6 @@
       }
     };
 
-    // ============================================================
-    // Утилиты
-    // ============================================================
     function formatDate(ts) {
       if (!ts) return '—';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
